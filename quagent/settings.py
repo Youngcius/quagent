@@ -36,7 +36,12 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'login.apps.LoginConfig',
-    # 'post.apps.PostConfig',
+    'main.apps.MainConfig',
+    'routing.apps.RoutingConfig',
+    'configure.apps.ConfigureConfig',
+    'foreign.apps.ForeignConfig',
+    'produce.apps.ProduceConfig',
+    'acquire.apps.AcquisitionConfig',
 
 ]
 

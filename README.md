@@ -1,4 +1,4 @@
-# quagent: Quantum Agent
+# Quagent: Quantum Agent
 Quantum network local agency software (web operation software)
 
 
@@ -6,11 +6,12 @@ English | [简体中文](README_CN.md)
 
 ![](asset/images/profile.png)
 
-[![](https://img.shields.io/badge/license-Apache%202.0-green)](./LICENSE) [![](https://img.shields.io/badge/build-passing-green)]() ![](https://img.shields.io/badge/Python-3.7--3.8-blue) ![](https://img.shields.io/badge/release-v0.1-blue)
+[![](https://img.shields.io/badge/license-Apache%202.0-green)](./LICENSE) [![](https://img.shields.io/badge/build-passing-green)]() ![](https://img.shields.io/badge/Python-3.7--3.8-blue) ![](https://img.shields.io/badge/release-v1.0.0-blue)
 
 [comment]: <> ([quagent &#40;Quantum Agent&#41;]&#40;https://quanlse.baidu.com&#41; is a cloud-based platform for quantum control developed by the [Institute for Quantum Computing]&#40;https://quantum.baidu.com&#41; at Baidu Research. Quanlse aims to bridge the gap between quantum software and hardware. It provides efficient and professional quantum control solutions via an open-source SDK strengthened by Quanlse Cloud Service.)
+Quagent is the shorthand of "Quantum Agent", a universal operation software for application in Quantum Local Network. While it depends on some necessary hardware at the same time. Currently, the `qugent-v1.0.0` is has been 
+used and tested in the series of experimental platforms of the [Center of Quantum Network](https://cqn-erc.org/) project at the University of Arizona. 
 
-Quanlse supports the pulse generation and scheduling of arbitrary single-qubit and two-qubit gates. With the help of toolkits in Quanlse, one can use Quanlse for modeling real superconducting quantum chips, simulating noisy quantum devices and dynamical evolution, visualizing error analysis, and characterizing and mitigating error. Single/two-qubit gates and general Mølmer-Sørensen gate realization on the trapped ion platform and relevant applications on the NMR platform are also available in Quanlse. For the practicality in experiments, Quanlse provides the toolkit for qubit and readout cavity calibration. Furthermore, Quanlse supports pulse-level control of quantum algorithms and advanced R&D (Research & Development) in the field of quantum control.
 
 ## Quagent v1.0.0
 
@@ -152,11 +153,6 @@ Users are encouraged to contact us through [Github Issues](https://github.com/Yo
 
 **A:** We encourage developers to use Quanlse to do research & development in the field of quantum control. Please cite us by including [BibTeX file](Quanlse.bib).
 
-[comment]: <> (## Changelog)
-
-[comment]: <> (The changelog of this project can be found in [CHANGELOG.md]&#40;CHANGELOG.md&#41;.)
-
-[comment]: <> (## Copyright and License)
 
 Quanlse uses [Apache-2.0 license](LICENSE).
 
@@ -167,13 +163,6 @@ Quanlse uses [Apache-2.0 license](LICENSE).
 
 [comment]: <> ([1] [Quantum Computing - Wikipedia]&#40;https://en.wikipedia.org/wiki/Quantum_computing&#41;.)
 
-[comment]: <> ([2] [Nielsen, Michael A., and Isaac L. Chuang. *Quantum Computation and Quantum Information: 10th Anniversary Edition*. Cambridge: Cambridge UP, 2010. Print.]&#40;https://doi.org/10.1017/CBO9780511976667&#41;)
-
-[comment]: <> ([3] [Werschnik, J., and E. K. U. Gross. "Quantum optimal control theory." *Journal of Physics B: Atomic, Molecular and Optical Physics* 40.18 &#40;2007&#41;: R175.]&#40;https://doi.org/10.1088/0953-4075/40/18/R01&#41;)
-
-[comment]: <> ([4] [Wendin, Göran. "Quantum information processing with superconducting circuits: a review." *Reports on Progress in Physics* 80.10 &#40;2017&#41;: 106001.]&#40;https://doi.org/10.1088/1361-6633/aa7e1a&#41;)
-
-[comment]: <> ([5] [Krantz, Philip, et al. "A quantum engineer's guide to superconducting qubits." *Applied Physics Reviews* 6.2 &#40;2019&#41;: 021318.]&#40;https://doi.org/10.1063/1.5089550&#41;)
 
 
 

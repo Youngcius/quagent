@@ -4,7 +4,7 @@ Switches controller
 import abc
 import serial
 from typing import List, Optional, Tuple
-from ..utils.hardware import hostport
+from ..utils.hardware import host
 
 
 class Switcher(abc.ABC):

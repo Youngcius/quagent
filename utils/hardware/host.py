@@ -1,11 +1,13 @@
 """
-Utils functions for serial communication
+Utils functions for serial communication, net port and so on of Host PC
 """
 
 import serial
 import sys
 import glob
 
+ipv4 = '10.134.235.69'
+tagger_port = 23000
 
 def serial_ports():
     """

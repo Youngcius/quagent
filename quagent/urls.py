@@ -23,5 +23,6 @@ urlpatterns = [
     path('produce/', include('produce.urls')),
     path('acquire/', include('acquire.urls')),
     path('configure/', include('configure.urls')),
+    path('routing/', include('routing.urls')),
     path('', include('main.urls')),
 ]

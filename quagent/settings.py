@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     'foreign.apps.ForeignConfig',
     'produce.apps.ProduceConfig',
     'acquire.apps.AcquisitionConfig',
+    'rest_framework',
 
 ]
 

@@ -27,6 +27,7 @@
 
 <p>AJAX</p>
 <div>
+    {#    <form action="{% url 'update-config' %}" method="get">#}
     <label for="binwidth">binwidth (ps)</label>
     {#    default: 1e12#}
     <input type="number" id="binwidth" name="binwidth" min="100" max="10000000000000" value="1000000000000"
@@ -36,11 +37,14 @@
     {% for ch in channels %}
         {#    e.g.    channels: [1,2,3,...,8]#}
         <input type="checkbox" id="channels" name="channels" value="{{ ch }}">
-        <label for="checkbox_{{ ch }}">channel {{ ch }}</label><br>
+        <label for="channels">channel {{ ch }}</label><br>
     {% endfor %}
     <input type="submit" value="Update" id="update">
+    {#    </form>#}
+
 </div>
 <script>
+    {#ajax 请求更新表单数据#}
     $('#update').click(function () {
         {#取出数据#}
         var binwidth = $('#binwidth').val();
@@ -62,55 +66,91 @@
             }
         })
     })
+
+    {#fetch()#}
+    {#$('#update').click(function () {#}
+    {#        var binwidth = $('#binwidth').val();#}
+    {#        var n_values = $('#n_values').val();#}
+    {#var channels = $('#channels').val();#}
+    {#        var channels = [];#}
+    {##}
+    {#        $("input[name='channels']:checked").each(function (i) {//把所有被选中的复选框的值存入数组#}
+    {#            channels[i] = $(this).val();#}
+    {#        });#}
+    {#let data = {#}
+    {#    binwidth: binwidth,#}
+    {#    n_values: n_values,#}
+    {#    channels: channels,#}
+    {# }#}
+    {#        let data =  new FormData()#}
+    {#        data.append('binwidth',binwidth);#}
+    {#        data.append('n_values',n_values);#}
+    {#        data.append('channels', channels);#}
+    {#let form = document.querySelector('form');#}
+    {#let data = new FormData(form);#}
+    {#data = JSON.stringify(data);#}
+    {#alert(data);#}
+
+    {#        fetch("{% url 'update-config' %}", {#}
+    {#            type: 'GET',#}
+    {#headers: {'Content-Type': 'application/json;charset=utf-8'},#}
+    {#            body: data,#}
+    {#        }).then(#}
+    {#            response => console.log(response, typeof response)#}
+    {#        ).catch(#}
+    {#            error => console.log(error)#}
+    {#        )#}
+    {#    }#}
+    {#)#}
 </script>
 
 
 <h2>Counter Data Acquisition Timely</h2>
 
 <div id="bar" style="width:1200px; height:600px;"></div>
-<script>
-    var chart = echarts.init(document.getElementById('bar'), 'white', {renderer: 'canvas'});
-    var old_data = [];
-    $(
-        function () {
-            fetchData(chart);
-            setInterval(fetchData, {{ interval }});
-        }
-    );
-
-    function fetchData() {
-        $.ajax({
-            type: "GET",
-            {#'counter' 是视图函数的名字（配置url时）#}
-            url: "{% url 'counter' %}",
-            dataType: "json",
-            success: function (result) {
-                var options = result.data;
-                chart.setOption(options);
-                old_data = chart.getOption().series[0].data;
-                {#old_data form: [..., [xi, yi], ...]#}
-            }
-        });
-    }
-
-    function getDynamicData() {
-        $.ajax({
-            type: "GET",
-            url: "{% url 'counter-update' %}",
-            dataType: 'json',
-            success: function (result) {
-                var options = result.data;
-                old_data.push([options.name, options.value]);
-                chart.setOption({
-                    series: [{
-                        data: old_data
-                    }]
-                });
-            }
-        });
-    }
-
-</script>
+{#<script>#}
+{#    var chart = echarts.init(document.getElementById('bar'), 'white', {renderer: 'canvas'});#}
+{#    var old_data = [];#}
+{#    $(#}
+{#        function () {#}
+{#            fetchData(chart);#}
+{#            setInterval(fetchData, {{ interval }});#}
+{#        }#}
+{#    );#}
+{##}
+{#    function fetchData() {#}
+{#        $.ajax({#}
+{#            type: "GET",#}
+{#'counter' 是视图函数的名字（配置url时）#}
+{#            url: "{% url 'counter' %}",#}
+{#            dataType: "json",#}
+{#            success: function (result) {#}
+{#                var options = result.data;#}
+{#                chart.setOption(options);#}
+{#                old_data = chart.getOption().series[0].data;#}
+{#old_data form: [..., [xi, yi], ...]#}
+{#            }#}
+{#        });#}
+{#    }#}
+{##}
+{#    function getDynamicData() {#}
+{#        $.ajax({#}
+{#            type: "GET",#}
+{#            url: "{% url 'counter-update' %}",#}
+{#            dataType: 'json',#}
+{#            success: function (result) {#}
+{#                var options = result.data;#}
+{#                old_data.push([options.name, options.value]);#}
+{#                chart.setOption({#}
+{#                    series: [{#}
+{#                        data: old_data#}
+{#                    }]#}
+{#                });#}
+{#            }#}
+{#        });#}
+{#    }#}
+{##}
+{#</script>#}
 
 
 <p>The following is </p>

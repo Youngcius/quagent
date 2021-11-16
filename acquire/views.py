@@ -42,11 +42,12 @@ def update_config(request: HttpRequest):
     # print('interval:', interval)
     # return render(request, 'tagger.html', {'channels': list(range(1, 9)), 'interval': interval})
 
-    # AJAX 形式
+    # AJAX 形式 / fetch
+    print('------------=================')
     print('----------',request.GET)
     binwidth = int(request.GET.get('binwidth'))
     n_values = int(request.GET.get('n_values'))
-    channels = list(map(int, request.GET.getlist('channels[]'))) # 注意参数名这里有个 []
+    channels = list(map(int, request.GET.getlist('channels'))) # 注意参数名这里有个 []
     counter_config['binwidth'] = binwidth
     counter_config['n_values'] = n_values
     counter_config['channels'] = channels

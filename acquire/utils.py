@@ -5,6 +5,7 @@ import numpy as np
 
 
 def response_as_json(data):
+    # dumps: dict --> str
     json_str = json.dumps(data)
     response = HttpResponse(
         json_str,
@@ -40,4 +41,6 @@ class Lister:
     def new(self):
         a = randrange(0, 100)
         self.l = self.l[1:] + [a]
+        return self.l
+    def cur(self):
         return self.l

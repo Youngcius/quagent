@@ -43,5 +43,5 @@ urlpatterns = [
     path('counter-update/', views.CounterChartUpdateView.as_view(), name='counter-update'),
     path('start-counter/', views.start_counter, name='start-counter'),
     path('stop-counter/', views.stop_counter, name='stop-counter'),
-
+    path('counter-download/', views.counter_download, name='counter-download'),
 ]

@@ -16,20 +16,32 @@ Including another URLconf
 from django.urls import path, include, re_path
 from . import views
 
-urlpatterns = [
-    path('', views.index),
-    # path('separate/', views.separate),
-    path('timely/', views.timely),
-    path('bar/', views.BarChartView.as_view(), name='demo-bar'),
-    path('separate/', views.BarIndexView.as_view(), name='demo-separate'),
-    path('line/', views.LineChartView.as_view(), name='demo-line'),
-    path('line-update/', views.LineChartUpdateView.as_view(), name='demo-update'),
-    path('refresh/', views.LineIndexView.as_view(), name='demo-refresh'),
-    path('tagger/updata-config', views.update_config, name='update-config'),
-    path('tagger/', views.tagger_demo, name='tagger'),
-    # path('tagger/', views.TaggerView.as_view(), name='tagger'),
+#
+# urlpatterns = [
+#     path('', views_reference.index),
+#     # path('separate/', views.separate),
+#     path('timely/', views_reference.timely),
+#     path('bar/', views_reference.BarChartView.as_view(), name='demo-bar'),
+#     path('separate/', views_reference.BarIndexView.as_view(), name='demo-separate'),
+#     path('line/', views_reference.LineChartView.as_view(), name='demo-line'),
+#     path('line-update/', views_reference.LineChartUpdateView.as_view(), name='demo-update'),
+#     path('refresh/', views_reference.LineIndexView.as_view(), name='demo-refresh'),
+#     path('tagger/updata-config', views_reference.update_config, name='update-config'),
+#     path('tagger/', views_reference.tagger_demo, name='tagger'),
+#     # path('tagger/', views.TaggerView.as_view(), name='tagger'),
+#
+#     path('tagger/counter', views_reference.CounterChartView.as_view(), name='counter'),
+#     path('tagger/counter-update', views_reference.CounterChartUpdateView.as_view(), name='counter-update'),
+#
+# ]
 
-    path('tagger/counter', views.CounterChartView.as_view(), name='counter'),
-    path('tagger/counter-update', views.CounterChartUpdateView.as_view(), name='counter-update'),
+
+urlpatterns = [
+    path('', views.index, name='acquire'),
+    path('update-config/', views.update_config, name='update-config'),
+    path('counter/', views.CounterChartView.as_view(), name='counter'),
+    path('counter-update/', views.CounterChartUpdateView.as_view(), name='counter-update'),
+    path('start-counter/', views.start_counter, name='start-counter'),
+    path('stop-counter/', views.stop_counter, name='stop-counter'),
 
 ]

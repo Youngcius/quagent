@@ -4,7 +4,7 @@ Quantum network local agency software (web operation software)
 
 English | [简体中文](README_CN.md)
 
-![](asset/images/profile.png)
+![](static/images/profile.png)
 
 [![](https://img.shields.io/badge/license-Apache%202.0-green)](./LICENSE) [![](https://img.shields.io/badge/build-passing-green)]() ![](https://img.shields.io/badge/Python-3.7--3.8-blue) ![](https://img.shields.io/badge/release-v1.0.0-blue)
 

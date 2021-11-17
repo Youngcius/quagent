@@ -1,175 +1,105 @@
+"""
+Data acquisition views functions.
+"""
 from django.shortcuts import render
-# from TimeTaggerRPC import client
+from TimeTaggerRPC import client
 from utils.hardware.host import ipv4, tagger_port
 from django.http import HttpRequest, HttpResponse
+import numpy as np
+from jinja2 import Environment, FileSystemLoader
+from pyecharts.globals import CurrentConfig
+from pyecharts import options as opts
+from pyecharts import charts
+import os
+from rest_framework.views import APIView
+import json
+from random import randrange
 
-# Create your views here.
-##################
-# Tagger Counter 表单功能设定
+from .utils import *
 
+JsonResponse = json_response
+JsonError = json_error
+
+CurrentConfig.GLOBAL_ENV = Environment(loader=FileSystemLoader("./template/pyecharts"))
 
 counter_config = {
     'binwidth': int(1e12),  # unit: ps
     'n_values': int(1e3),
-    # 'channels': [1, 3, 5],
     'channels': []
 }
-
+n_channels = 8
 counter = None
+tagger = None
+tt = client.createProxy(host=ipv4, port=tagger_port)
 
 
-def update_config(request: HttpRequest):
-    """
-    更新参数
-    """
+def index(request):
+    interval = int(counter_config['binwidth'] / 1e9)  # ps --> ms
+    global tagger
+    if tagger is None:
+        tagger = tt.createTimeTagger(host=ipv4, port=tagger_port)
+        for ch in range(1, n_channels + 1):
+            tagger.setTestSignal(ch, True)
 
-    # form 表单形式
-    # binwidth = request.POST.get(key='binwidth')
-    # n_values = request.POST.get(key='n_values')
-    # channels = request.POST.getlist(key='channels')
-    # binwidth = int(request.GET.get('binwidth'))
-    # n_values = int(request.GET.get('n_values'))
-    # channels = list(map(int, request.GET.getlist('channels')))
-    # print(binwidth)
-    # print(n_values)
-    # print('new channels:', channels, type(channels))
-    # counter_config['binwidth'] = binwidth
-    # counter_config['n_values'] = n_values
-    # counter_config['channels'] = channels
-    # # 没有返回HTTP响应
-    # # pass
-    # interval = int(counter_config['binwidth'] / 1e9)  # ps --> ms
-    # print('interval:', interval)
-    # return render(request, 'tagger.html', {'channels': list(range(1, 9)), 'interval': interval})
+    return render(request, 'acquire.html', {'channels': list(range(1, n_channels + 1)), 'interval': interval})
 
-    # AJAX 形式 / fetch
-    print('------------=================')
-    print('----------',request.GET)
+
+def update_config(request):
+    # AJAX    GET
+    print(request.GET)
     binwidth = int(request.GET.get('binwidth'))
     n_values = int(request.GET.get('n_values'))
-    channels = list(map(int, request.GET.getlist('channels'))) # 注意参数名这里有个 []
+    channels = list(map(int, request.GET.getlist('channels[]')))  # 注意参数名这里有个 []
     counter_config['binwidth'] = binwidth
     counter_config['n_values'] = n_values
     counter_config['channels'] = channels
 
     print(counter_config)
+    # 创建 Counter
+    global counter
+    # if counter is None:
+    counter = tt.Counter(tagger, counter_config['channels'], binwidth=counter_config['binwidth'],
+                         n_values=counter_config['n_values'])
+    counter.stop()
 
     return HttpResponse('update successfully')
 
 
-def measure_display(request):
-    """
-    实时显示数据图像
-    """
-    tt = client.createProxy(host=ipv4, port=tagger_port)
-    tagger = tt.createTimeTagger()
-    counter = tt.Counter(tagger, counter_config["channels"], binwidth=counter_config['binwidth'],
-                         n_values=counter_config['n_values'])
-    # tagger.setTestSignal(1, True)
-    # tagger.setTestSignal(2, True)
-
-
-N = 50
-import numpy as np
-
-
-class Lister:
-    def __init__(self):
-        self.l = np.random.randint(0, 100, N).tolist()
-
-    def new(self):
-        a = randrange(0, 100)
-        self.l = self.l[1:] + [a]
-        return self.l
-
-
-lister = Lister()
-lister2 = Lister()
-
-from pyecharts import charts
-
-
-def counter_fig() -> str:
-    line = Line()
-    line.add_xaxis(list(range(0, counter_config['n_values'] + 1)))
-    for ch in counter_config['channels']:
-        line.add_yaxis(series_name='channel {}'.format(ch), y_axis=lister.new())
-    line.set_global_opts(title_opts=opts.TitleOpts(title='Counting'),
-                         xaxis_opts=opts.AxisOpts(type_='value'),
-                         yaxis_opts=opts.AxisOpts(type_='value'))
-    fig_str = line.dump_options_with_quotes()
-
-    return fig_str
-
-
-from rest_framework.views import APIView
-
-
-class CounterChartView(APIView):
-    def get(self, request, *args, **kwargs):
-        return JsonResponse(json.loads(counter_fig()))
-
-
-cnt = N
-
-
-class CounterChartUpdateView(APIView):
-    def get(self, request, *args, **kwargs):
-        global cnt
-        cnt += 1
-        return JsonResponse({'name': cnt, 'value': randrange(0, 100)})
-
-
-# def tagger(request: HttpRequest):
-
-# return render(request, 'tagger.html', {'channels': list(range(1, 9))})
-# class TaggerView(APIView):
+# ====================================================================
+# 以下是 Example（模拟数据）
+#
+# lister = Lister(50)
+#
+#
+# def counter_fig() -> str:
+#     line = charts.Line()
+#     line.add_xaxis(list(range(0, counter_config['n_values'] + 1)))
+#     for ch in counter_config['channels']:
+#         line.add_yaxis(series_name='channel {}'.format(ch), y_axis=lister.new())
+#     line.set_global_opts(title_opts=opts.TitleOpts(title='Counting'),
+#                          xaxis_opts=opts.AxisOpts(type_='value'),
+#                          yaxis_opts=opts.AxisOpts(type_='value'))
+#     fig_str = line.dump_options_with_quotes()
+#
+#     return fig_str
+#
+#
+# class CounterChartView(APIView):
 #     def get(self, request, *args, **kwargs):
-#         interval = int(counter_config['binwidth'] / 1e9)  # ps --> ms
-#         return render(request, 'tagger.html', {'channels': list(range(1, 9)), 'interval': interval})
-
-def tagger_demo(request):
-    interval = int(counter_config['binwidth'] / 1e9)  # ps --> ms
-    print('interval:', interval)
-    return render(request, 'tagger.html', {'channels': list(range(1, 9)), 'interval': interval})
-
-
-# def line_base() -> Line:
-#     line = (
-#         Line()
-#             .add_xaxis(list(range(N)))
-#             .add_yaxis(series_name="List 1", y_axis=lister.new())  # y_axis=[randrange(0, 100) for _ in range(N)])
-#             .add_yaxis(series_name="List 2", y_axis=lister2.new())
-#             .set_global_opts(
-#             title_opts=opts.TitleOpts(title="动态数据"),
-#             xaxis_opts=opts.AxisOpts(type_="value"),
-#             yaxis_opts=opts.AxisOpts(type_="value")
-#         )
-#             .dump_options_with_quotes()
-#     )
-#     return line
+#         return JsonResponse(json.loads(counter_fig()))
 #
 #
-# class LineChartView(APIView):
-#     def get(self, request, *args, **kwargs):
-#         return JsonResponse(json.loads(line_base()))
+# cnt = 5000
 #
 #
-# cnt = 9
-#
-#
-# class LineChartUpdateView(APIView):
+# class CounterChartUpdateView(APIView):
 #     def get(self, request, *args, **kwargs):
 #         global cnt
-#         cnt = cnt + 1
-#         return JsonResponse({"name": cnt, "value": randrange(0, 100)})
-#
-#
-# class LineIndexView(APIView):
-#     def get(self, request, *args, **kwargs):
-#         return HttpResponse(content=open("./template/refresh.html").read())
+#         cnt += 1
+#         return JsonResponse({'name': cnt, 'value': randrange(0, 5)})
 
-# ==================================================================
+# ====================================================================
+# 以下为真实的TimeTagger测试
 
 #
 # def create_tagger():
@@ -191,171 +121,48 @@ def tagger_demo(request):
 #         TT.freeTimeTagger(tagger)
 
 
-from django.http import HttpResponse
-from jinja2 import Environment, FileSystemLoader
-from pyecharts.globals import CurrentConfig
-
-CurrentConfig.GLOBAL_ENV = Environment(loader=FileSystemLoader("./template/pyecharts"))
-from pyecharts import options as opts
-from pyecharts.charts import Bar
-
-import os
-
-
-def index(request):
-    # return HttpResponse('Acquire')
-    title_opts = opts.TitleOpts(title="Bar-基本示例", subtitle="我是副标题")
-    c = (Bar().add_xaxis(["衬衫", "羊毛衫", "雪纺衫", "裤子", "高跟鞋", "袜子"]).add_yaxis("商家A", [5, 20, 36, 10, 75, 90]).add_yaxis(
-        "商家B",
-        [15,
-         25,
-         16,
-         55,
-         48,
-         8]).set_global_opts(title_opts=title_opts))
-    # c.render()
-    # return HttpResponse(c.render(template_name='simple_chart.html'))
-    # print(os.getcwd())
-    return HttpResponse(c.render_embed())
-
-
-def separate(request):
-    """
-    前后端分离
-    """
+def free_tagger():
+    # global tagger
     pass
 
 
-def timely(request):
-    """
-    定量实时刷新
-    """
-    pass
+def start_counter(request):
+    counter.start()
+    return HttpResponse('Has started the Counter Measurement')
 
 
-import json
-from random import randrange
-
-from django.http import HttpResponse
-from rest_framework.views import APIView
-
-from pyecharts.charts import Bar
-from pyecharts import options as opts
+def stop_counter():
+    counter.stop()
+    return HttpResponse('Has stopped the Counter Measurement')
 
 
-# Create your views here.
-def response_as_json(data):
-    json_str = json.dumps(data)
-    response = HttpResponse(
-        json_str,
-        content_type="application/json",
+def counter_fig() -> str:
+    line = charts.Line()
+    line.add_xaxis(list(range(0, counter_config['n_values'] + 1)))
+    # global counter
+    counting = counter.getData()
+    for i, ch in enumerate(counter_config['channels']):
+        line.add_yaxis(series_name='channel {}'.format(ch), y_axis=counting[0].tolist())
+    line.set_global_opts(
+        title_opts=opts.TitleOpts(title='Counting'),
+        xaxis_opts=opts.AxisOpts(type_='value'),
+        yaxis_opts=opts.AxisOpts(type_='value'),
+
     )
-    response["Access-Control-Allow-Origin"] = "*"
-    return response
+    fig_str = line.dump_options_with_quotes()
+    return fig_str
 
 
-def json_response(data, code=200):
-    data = {
-        "code": code,
-        "msg": "success",
-        "data": data,
-    }
-    return response_as_json(data)
-
-
-def json_error(error_string="error", code=500, **kwargs):
-    data = {
-        "code": code,
-        "msg": error_string,
-        "data": {}
-    }
-    data.update(kwargs)
-    return response_as_json(data)
-
-
-JsonResponse = json_response
-JsonError = json_error
-
-
-def bar_base() -> Bar:
-    c = (
-        Bar()
-            .add_xaxis(["衬衫", "羊毛衫", "雪纺衫", "裤子", "高跟鞋", "袜子"])
-            .add_yaxis("商家A", [randrange(0, 100) for _ in range(6)])
-            .add_yaxis("商家B", [randrange(0, 100) for _ in range(6)])
-            .set_global_opts(title_opts=opts.TitleOpts(title="Bar-基本示例", subtitle="我是副标题"))
-            .dump_options_with_quotes()
-    )
-    return c
-
-
-class BarChartView(APIView):
-    # 后端数据绘图
+class CounterChartView(APIView):
     def get(self, request, *args, **kwargs):
-        return JsonResponse(json.loads(bar_base()))
+        return JsonResponse(json.loads(counter_fig()))
 
 
-class BarIndexView(APIView):
-    # 前端展示
-    def get(self, request, *args, **kwargs):
-        return HttpResponse(content=open("./template/separate.html").read())
+cnt = counter_config['n_values']
 
 
-# Create your views here.
-
-
-# 前后端分离 实时刷新
-import json
-from random import randrange
-
-from django.http import HttpResponse
-from rest_framework.views import APIView
-
-from pyecharts.charts import Line
-from pyecharts import options as opts
-
-
-class Lister:
-    def __init__(self):
-        self.l = np.random.randint(0, 100, N).tolist()
-
-    def new(self):
-        a = randrange(0, 100)
-        self.l = self.l[1:] + [a]
-        return self.l
-
-
-def line_base() -> Line:
-    line = (
-        Line()
-            .add_xaxis(list(range(N)))
-            .add_yaxis(series_name="List 1", y_axis=lister.new())  # y_axis=[randrange(0, 100) for _ in range(N)])
-            .add_yaxis(series_name="List 2", y_axis=lister2.new())
-            .set_global_opts(
-            title_opts=opts.TitleOpts(title="动态数据"),
-            xaxis_opts=opts.AxisOpts(type_="value"),
-            yaxis_opts=opts.AxisOpts(type_="value")
-        )
-            .dump_options_with_quotes()
-    )
-    return line
-
-
-class LineChartView(APIView):
-    def get(self, request, *args, **kwargs):
-        return JsonResponse(json.loads(line_base()))
-
-
-cnt = 9
-
-
-class LineChartUpdateView(APIView):
+class CounterChartUpdateView(APIView):
     def get(self, request, *args, **kwargs):
         global cnt
-        cnt = cnt + 1
-        return JsonResponse({"name": cnt, "value": randrange(0, 100)})
-
-
-class LineIndexView(APIView):
-    def get(self, request, *args, **kwargs):
-        return HttpResponse(content=open("./template/refresh.html").read())
+        cnt += 1
+        return JsonResponse({'name': cnt, 'value': randrange(0, 100)})

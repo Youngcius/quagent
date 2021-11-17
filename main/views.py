@@ -8,7 +8,8 @@ def home(request):
     """
     主界面
     """
-    return HttpResponse('Hello, this is QUAGENT!')
+    return render(request, 'home.html')
+    # return HttpResponse('Hello, this is QUAGENT!')
 
 
 from django.shortcuts import render

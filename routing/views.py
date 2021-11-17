@@ -8,3 +8,7 @@ from django.http import HttpRequest, HttpResponse
 def request_switch_access(request: HttpRequest):
     # request.GET.get('')
     pass
+
+
+def index(request):
+    return render(request, 'routing.html', )

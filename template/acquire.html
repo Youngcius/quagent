@@ -59,6 +59,8 @@
                 type: 'GET',
                 success: function (response) {
                     console.log(response, typeof response);
+                    {#alert(response)#}
+
                 }
             })
         })
@@ -69,12 +71,73 @@
                 type: 'GET',
                 success: function (response) {
                     console.log(response, typeof response);
+                    {#alert(response)#}
+
                 }
             })
 
         })
 
     </script>
+
+
+    {#     2.   绘图表现 TimeTagger#}
+    <div class="ui container">
+        <div id="bar" style="width:1200px; height:600px;"></div>
+    </div>
+    <script>
+        var chart = echarts.init(document.getElementById('bar'), 'white', {renderer: 'canvas'});
+        var old_data = [];
+        var interval = $('#binwidth').val() / 1e9;
+        $('#update').click(function () {
+            interval = $('#binwidth').val() / 1e9;
+            {#alert(String(interval) + typeof (interval));#}
+
+        })
+
+        $(
+            function () {
+                fetchData(chart);
+                setInterval(fetchData, interval);
+            }
+        );
+
+        function fetchData() {
+            $.ajax({
+                type: "GET",
+                {#'counter' 是视图函数的名字（配置url时）#}
+                url: "{% url 'counter' %}",
+                dataType:
+                    "json",
+                success: function (result) {
+                    var options = result.data;
+                    chart.setOption(options);
+                    old_data = chart.getOption().series[0].data;
+                    {#old_data form: [..., [xi, yi], ...]#}
+                }
+            })
+            ;
+        }
+
+        function getDynamicData() {
+            $.ajax({
+                type: "GET",
+                url: "{% url 'counter-update' %}",
+                dataType: 'json',
+                success: function (result) {
+                    var options = result.data;
+                    old_data.push([options.name, options.value]);
+                    chart.setOption({
+                        series: [{
+                            data: old_data
+                        }]
+                    });
+                }
+            });
+        }
+
+    </script>
+
     {##}
     {##}
     {# 2.   绘图表现 Example#}
@@ -128,55 +191,6 @@
     {#    </script>#}
     {##}
 
-    {#     2.   绘图表现 TimeTagger#}
-    <div class="ui container">
-        <div id="bar" style="width:1200px; height:600px;"></div>
-    </div>
-    <script>
-        var chart = echarts.init(document.getElementById('bar'), 'white', {renderer: 'canvas'});
-        var old_data = [];
-        $(
-            function () {
-                fetchData(chart);
-                setInterval(fetchData, {{ interval }});
-            }
-        );
-
-        function fetchData() {
-            $.ajax({
-                type: "GET",
-                {#'counter' 是视图函数的名字（配置url时）#}
-                url: "{% url 'counter' %}",
-                dataType:
-                    "json",
-                success: function (result) {
-                    var options = result.data;
-                    chart.setOption(options);
-                    old_data = chart.getOption().series[0].data;
-                    {#old_data form: [..., [xi, yi], ...]#}
-                }
-            })
-            ;
-        }
-
-        function getDynamicData() {
-            $.ajax({
-                type: "GET",
-                url: "{% url 'counter-update' %}",
-                dataType: 'json',
-                success: function (result) {
-                    var options = result.data;
-                    old_data.push([options.name, options.value]);
-                    chart.setOption({
-                        series: [{
-                            data: old_data
-                        }]
-                    });
-                }
-            });
-        }
-
-    </script>
 
 
 {% endblock %}

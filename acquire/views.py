@@ -30,15 +30,18 @@ counter_config = {
 n_channels = 8
 counter = None
 tagger = None
-tt = client.createProxy(host=ipv4, port=tagger_port)
-
+# tt = client.createProxy(host=ipv4, port=tagger_port)
+import TimeTagger as tt
 
 def index(request):
     interval = int(counter_config['binwidth'] / 1e9)  # ps --> ms
+    print('inverval: ', interval)
     global tagger
     if tagger is None:
-        tagger = tt.createTimeTagger(host=ipv4, port=tagger_port)
+        # tagger = tt.createTimeTagger(host=ipv4, port=tagger_port)
+        tagger = tt.createTimeTagger()
         for ch in range(1, n_channels + 1):
+            # tagger.setTriggerLevel(ch, ch)
             tagger.setTestSignal(ch, True)
 
     return render(request, 'acquire.html', {'channels': list(range(1, n_channels + 1)), 'interval': interval})
@@ -55,12 +58,12 @@ def update_config(request):
     counter_config['channels'] = channels
 
     print(counter_config)
-    # 创建 Counter
+    # 创建 Counter & auto-start
     global counter
     # if counter is None:
     counter = tt.Counter(tagger, counter_config['channels'], binwidth=counter_config['binwidth'],
                          n_values=counter_config['n_values'])
-    counter.stop()
+    # counter.stop()
 
     return HttpResponse('update successfully')
 
@@ -131,7 +134,7 @@ def start_counter(request):
     return HttpResponse('Has started the Counter Measurement')
 
 
-def stop_counter():
+def stop_counter(request):
     counter.stop()
     return HttpResponse('Has stopped the Counter Measurement')
 
@@ -140,9 +143,10 @@ def counter_fig() -> str:
     line = charts.Line()
     line.add_xaxis(list(range(0, counter_config['n_values'] + 1)))
     # global counter
-    counting = counter.getData()
-    for i, ch in enumerate(counter_config['channels']):
-        line.add_yaxis(series_name='channel {}'.format(ch), y_axis=counting[0].tolist())
+    if counter is not None and counter.isRunning():
+        counting = counter.getData()
+        for i, ch in enumerate(counter_config['channels']):
+            line.add_yaxis(series_name='channel {}'.format(ch), y_axis=counting[0].tolist())
     line.set_global_opts(
         title_opts=opts.TitleOpts(title='Counting'),
         xaxis_opts=opts.AxisOpts(type_='value'),

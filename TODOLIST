@@ -1,0 +1,16 @@
+--------------
+11月份TODO：
+- dev图标改为release（readmea中）
+- 为每个用户配置数据和Counter对象
+- 优化框架设计
+
+
+个人电脑数据库：
+    # 'default': {
+    #     'ENGINE': 'django.db.backends.mysql',
+    #     'NAME': 'quagent',
+    #     'USER': 'root',
+    #     'PASSWORD': 'mimawangle123',
+    #     'HOST': '127.0.0.1',
+    #     'PORT': '3306'
+    # }

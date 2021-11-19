@@ -24,8 +24,6 @@ from random import randrange
 
 from .utils import *
 
-# JsonResponse = json_response
-# JsonError = json_error
 
 CurrentConfig.GLOBAL_ENV = Environment(loader=FileSystemLoader("./template/pyecharts"))
 
@@ -38,23 +36,17 @@ n_channels = 8
 counter = None
 tagger = None
 
-# tt = client.createProxy(host=ipv4, port=tagger_port)
-
-import TimeTagger as tt
 
 
 def index(request):
     interval = int(counter_config['binwidth'] / 1e9)  # ps --> ms
     print('inverval: ', interval)
     global tagger
-    if tagger is None:
-        print('creating...........................................')
-        # tagger = tt.createTimeTagger(host=ipv4, port=tagger_port)
-        print(tagger)
-        print('=' * 20, tt.scanTimeTagger(), '=' * 20)
-        tagger = tt.createTimeTagger()
-        for ch in range(1, n_channels + 1):  # simulation signals
-            tagger.setTestSignal(ch, True)
+    # if tagger is None:
+    # tagger = tt.createTimeTagger(host=ipv4, port=tagger_port)
+    # tagger = tt.createTimeTagger()
+    # for ch in range(1, n_channels + 1):
+    #     tagger.setTestSignal(ch, True)
 
     return render(request, 'acquire.html', {'channels': list(range(1, n_channels + 1)), 'interval': interval})
 
@@ -78,105 +70,76 @@ def update_config(request):
     global lister
     lister = Lister(counter_config['n_values'])
     # if counter is None:
-    counter = tt.Counter(tagger, counter_config['channels'], binwidth=counter_config['binwidth'],
-                         n_values=counter_config['n_values'])
+
 
     return HttpResponse('update successfully')
 
 
-# ====================================================================
-# 以下为真实的TimeTagger测试
-
-#
-# def create_tagger():
-#     with client.createProxy(host=ipv4, port=tagger_port) as TT:
-#         tagger = TT.createTimeTagger()
-#         tagger.setTestSignal(1, True)
-#         tagger.setTestSignal(2, True)
-#
-#         hist = TT.Correlation(tagger, 1, 2, binwidth=5, n_bins=2000)
-#         hist.startFor(int(10e12), clear=True)
-#
-#         x = hist.getIndex()
-#         while hist.isRunning():
-#             plt.pause(0.1)
-#             y = hist.getData()
-#             plt.cla()
-#             plt.plot(x, y)
-#
-#         TT.freeTimeTagger(tagger)
-
-#
-# def free_tagger():
-#     # global tagger
-#     pass
-#
 #
 def start_counter(request):
-    if counter is None:
-        return HttpResponse('There is no Counter instance!')
-    else:
-        counter.start()
-        return HttpResponse('Has started the Counter Measurement')
+    # counter.start()
+    return HttpResponse('Has started the Counter Measurement')
 
 
 def stop_counter(request):
-    if counter is None:
-        return HttpResponse('There is no Counter instance!')
-    else:
-        counter.stop()
-        return HttpResponse('Has stopped the Counter Measurement')
+    # counter.stop()
+    return HttpResponse('Has stopped the Counter Measurement')
+
+
+
+
+
+# ====================================================================
+# 以下是 Example（模拟数据）
 
 
 def counter_fig() -> str:
     line = charts.Line()
     line.add_xaxis(list(range(0, counter_config['n_values'] + 1)))
-    # global counter
-    if counter is not None and counter.isRunning():
-        counting = counter.getData()
-        for i, ch in enumerate(counter_config['channels']):
-            line.add_yaxis(series_name='channel {}'.format(ch), y_axis=counting[0].tolist())
-    line.set_global_opts(
-        title_opts=opts.TitleOpts(title='Counting'),
-        xaxis_opts=opts.AxisOpts(type_='value'),
-        yaxis_opts=opts.AxisOpts(type_='value'),
-
-    )
+    for ch in counter_config['channels']:
+        line.add_yaxis(series_name='channel {}'.format(ch), y_axis=lister.new())
+    line.set_global_opts(title_opts=opts.TitleOpts(title='Counting'),
+                         xaxis_opts=opts.AxisOpts(type_='value'),
+                         yaxis_opts=opts.AxisOpts(type_='value'))
     fig_str = line.dump_options_with_quotes()
+
     return fig_str
 
+
+# JsonResponse = json_response
 
 class CounterChartView(APIView):
     def get(self, request, *args, **kwargs):
         return JsonResponse(json.loads(counter_fig()))
 
 
-data_cache = []
-cnt = counter_config['n_values']
+cnt = 5000
 
 
 class CounterChartUpdateView(APIView):
     def get(self, request, *args, **kwargs):
         global cnt
         cnt += 1
-        return JsonResponse({'name': cnt, 'value': randrange(0, 100)})
+        return JsonResponse({'name': cnt, 'value': randrange(0, 5)})
 
 
-def get_data():
-    data_cache.append(counter.getData())
+data_cache = []
 
 
 def counter_download(request):
     """
-    根据指定采集时间采集和下载数据
+    模拟数据
     """
     # 视图响应本身就是多线程？
     T = float(request.GET.get('T'))  # unit: s
     t = counter_config["binwidth"] * counter_config['n_values'] / 1e12  # ps --> s
     data_cache.clear()  # clear cache firstly
+
+    def get_data():
+        data_cache.append(lister.cur())
+
     N = int(T / t)
 
-    print('==' * 30)
     print('下载时间：', T, '单位时间：', t)
 
     def create_get_data_thread(name=None):
@@ -193,13 +156,16 @@ def counter_download(request):
             time.sleep(t)
             thread.start()
             thread.join()
+
     data_with_config = copy.deepcopy(counter_config)
     data_with_config['binwidth'] /= 1e12  # ps --> s
     data_with_config['time'] = T
     data_with_config['data'] = np.hstack(data_cache).tolist()
     data_with_config['timestamp'] = str(datetime.datetime.now())
-    response = FileResponse(json.dumps(data_with_config))  # dict --> str
+    response = FileResponse(json.dumps(data_with_config)) # dict --> str
     response['Content-Type'] = 'application/octet-stream'  # 设置头信息，告诉浏览器这是个文件
-    response['Content-Disposition'] = 'attachment;filename={}'.format(
-        'counting' + str(datetime.date.today()) + str(uuid.uuid4()) + '.json')
+    fname = 'counting' + str(datetime.date.today()) + str(uuid.uuid4()) + '.json'
+    print('=='*30)
+    print('fname: {}'.format(fname))
+    response['Content-Disposition'] = 'attachment;filename="{}"'.format(fname)
     return response

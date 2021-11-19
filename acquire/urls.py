@@ -14,7 +14,7 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.urls import path, include, re_path
-from . import views
+from . import views_sim, views
 
 #
 # urlpatterns = [
@@ -45,3 +45,5 @@ urlpatterns = [
     path('stop-counter/', views.stop_counter, name='stop-counter'),
     path('counter-download/', views.counter_download, name='counter-download'),
 ]
+
+

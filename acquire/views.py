@@ -50,11 +50,13 @@ def index(request):
     if tagger is None:
         print('creating...........................................')
         # tagger = tt.createTimeTagger(host=ipv4, port=tagger_port)
-        print(tagger)
         print('=' * 20, tt.scanTimeTagger(), '=' * 20)
         tagger = tt.createTimeTagger()
         for ch in range(1, n_channels + 1):  # simulation signals
             tagger.setTestSignal(ch, True)
+        print(tagger,type(tagger))
+
+    print(tagger)
 
     return render(request, 'acquire.html', {'channels': list(range(1, n_channels + 1)), 'interval': interval})
 

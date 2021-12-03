@@ -108,19 +108,31 @@ def counter_fig() -> str:
 
 # JsonResponse = json_response
 
-class CounterChartView(APIView):
-    def get(self, request, *args, **kwargs):
-        return JsonResponse(json.loads(counter_fig()))
+# class CounterChartView(APIView):
+#     def get(self, request, *args, **kwargs):
+#         return JsonResponse(json.loads(counter_fig()))
 
 
-cnt = 5000
+def CounterChartView(request):
+    return JsonResponse(json.loads(counter_fig()))
 
 
-class CounterChartUpdateView(APIView):
-    def get(self, request, *args, **kwargs):
-        global cnt
-        cnt += 1
-        return JsonResponse({'name': cnt, 'value': randrange(0, 5)})
+# cnt = 5000
+
+
+# class CounterChartUpdateView(APIView):
+#     def get(self, request, *args, **kwargs):
+#         global cnt
+#         cnt += 1
+#         return JsonResponse({'name': cnt, 'value': randrange(0, 5)})
+
+
+def CounterChartUpdateView(request):
+    # global cnt
+    # cnt += 1
+    return JsonResponse({'name': 10, 'value': randrange(0, 5)})
+
+
 
 
 data_cache = []

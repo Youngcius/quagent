@@ -14,7 +14,7 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.urls import path, include, re_path
-from . import views_sim, views
+from . import views_sim
 
 #
 # urlpatterns = [
@@ -37,13 +37,11 @@ from . import views_sim, views
 
 
 urlpatterns = [
-    path('', views.index, name='acquire'),
-    path('update-config/', views.update_config, name='update-config'),
-    path('counter/', views.CounterChartView.as_view(), name='counter'),
-    path('counter-update/', views.CounterChartUpdateView.as_view(), name='counter-update'),
-    path('start-counter/', views.start_counter, name='start-counter'),
-    path('stop-counter/', views.stop_counter, name='stop-counter'),
-    path('counter-download/', views.counter_download, name='counter-download'),
+    path('', views_sim.index, name='acquire'),
+    path('update-config/', views_sim.update_config, name='update-config'),
+    path('counter/', views_sim.CounterChartView, name='counter'),
+    # path('counter-update/', views_sim.CounterChartUpdateView, name='counter-update'),
+    path('start-counter/', views_sim.start_counter, name='start-counter'),
+    path('stop-counter/', views_sim.stop_counter, name='stop-counter'),
+    path('counter-download/', views_sim.counter_download, name='counter-download'),
 ]
-
-

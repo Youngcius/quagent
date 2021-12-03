@@ -8,6 +8,13 @@ def home(request):
     """
     主界面
     """
+    if request.user.is_authenticated:
+        print('用户已经授权')
+        print(request.user)
+        request.user
+    else:
+        print('未授权')
+        print(request.user)
     return render(request, 'home.html')
     # return HttpResponse('Hello, this is QUAGENT!')
 

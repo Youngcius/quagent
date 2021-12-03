@@ -158,25 +158,23 @@
                 }
             }
         );
-
-
         {##}
-
-        function getDynamicData() {
-            $.ajax({
-                type: "GET",
-                url: "{% url 'counter-update' %}",
-                dataType: 'json',
-                success: function (result) {
-                    old_data.push([result.name, result.value]);
-                    chart.setOption({
-                        series: [{
-                            data: old_data
-                        }]
-                    });
-                }
-            });
-        }
+        {##}
+        {#function getDynamicData() {#}
+        {#    $.ajax({#}
+        {#        type: "GET",#}
+        {#        url: "{% url 'counter-update' %}",#}
+        {#        dataType: 'json',#}
+        {#        success: function (result) {#}
+        {#            old_data.push([result.name, result.value]);#}
+        {#            chart.setOption({#}
+        {#                series: [{#}
+        {#                    data: old_data#}
+        {#                }]#}
+        {#            });#}
+        {#        }#}
+        {#    });#}
+        {# } #}
 
     </script>
 

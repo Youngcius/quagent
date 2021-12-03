@@ -36,13 +36,15 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'login.apps.LoginConfig',
+    # 'login.apps.LoginConfig',
     'main.apps.MainConfig',
-    'routing.apps.RoutingConfig',
-    'configure.apps.ConfigureConfig',
+    # 'routing.apps.RoutingConfig',
+    # 'configure.apps.ConfigureConfig',
     'foreign.apps.ForeignConfig',
-    'produce.apps.ProduceConfig',
+    # 'produce.apps.ProduceConfig',
     'acquire.apps.AcquisitionConfig',
+    # 'hubinfo.apps.HubinfoConfig'
+    'hubinfo.apps.HubinfoConfig',
     'rest_framework',
 
 ]
@@ -131,3 +133,6 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 STATICFILES_DIRS = [
     os.path.join(BASE_DIR, 'static'),
 ]
+
+LOGIN_REDIRECT_URL = '/'  # 重定向到主页面
+

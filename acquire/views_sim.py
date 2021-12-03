@@ -21,6 +21,7 @@ import tempfile
 from rest_framework.views import APIView
 import json
 from random import randrange
+from django.contrib.auth.decorators import login_required
 
 from .utils import *
 
@@ -37,7 +38,7 @@ counter = None
 tagger = None
 
 
-
+@login_required
 def index(request):
     interval = int(counter_config['binwidth'] / 1e9)  # ps --> ms
     print('inverval: ', interval)

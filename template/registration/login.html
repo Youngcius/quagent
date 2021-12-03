@@ -1,19 +1,33 @@
 {% extends "basic.html" %}
+{% load static %}
+
+
 
 {% block content %}
+    <div class="pusher">
+        <div class="ui container">
+            <img src="{% static 'images/profile.png' %}" alt="">
 
-    {% if form.errors %}
-        <p class="error">Sorry, that's not a valid username or password</p>
-    {% endif %}
+        </div>
 
-    <form action="" method="post">
-        <label for="username">User name:</label>
-        <input type="text" name="username" value="" id="username">
-        <label for="password">Password:</label>
-        <input type="password" name="password" value="" id="password">
+        <div class="ui inverted vertical masthead center aligned segment">
+            {% if form.errors %}
+                <p class="error">Sorry, that's not a valid username or password</p>
+            {% endif %}
 
-        <input type="submit" value="login"/>
-        <input type="hidden" name="next" value="{{ next|escape }}"/>
-    </form>
+            <form action="" method="post">
+                {% csrf_token %}
+                <label for="username" class="ui label">User name:</label>
+                <input type="text" name="username" value="" id="username" class="ui input">
+                <label for="password" class="ui label">Password:</label>
+                <input type="password" name="password" value="" id="password" class="ui password">
 
+                <input type="submit" value="login" class="ui secondary button">
+                <input type="hidden" name="next" value="{{ next|escape }}"/>
+            </form>
+
+        </div>
+
+
+    </div>
 {% endblock %}

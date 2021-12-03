@@ -34,7 +34,7 @@ from . import views_sim
 #     path('tagger/counter-update', views_reference.CounterChartUpdateView.as_view(), name='counter-update'),
 #
 # ]
-
+from . import category
 
 urlpatterns = [
     path('', views_sim.index, name='acquire'),
@@ -44,4 +44,5 @@ urlpatterns = [
     path('start-counter/', views_sim.start_counter, name='start-counter'),
     path('stop-counter/', views_sim.stop_counter, name='stop-counter'),
     path('counter-download/', views_sim.counter_download, name='counter-download'),
+    path('select/', category.select)
 ]

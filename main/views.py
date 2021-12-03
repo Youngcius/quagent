@@ -11,7 +11,6 @@ def home(request):
     if request.user.is_authenticated:
         print('用户已经授权')
         print(request.user)
-        request.user
     else:
         print('未授权')
         print(request.user)

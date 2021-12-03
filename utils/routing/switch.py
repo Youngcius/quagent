@@ -4,12 +4,12 @@ Switches controller
 import abc
 import serial
 from typing import List, Optional, Tuple
-from ..utils.hardware import host
+from utils.hardware import host
 
 
 class Switcher(abc.ABC):
     def __init__(self):
-        self.port = hostport.serial_ports()[0]
+        self.port = host.serial_ports()[0]
         self.baudrate = 19200
         self.timeout = 0.1
         self.connected = None

@@ -1,0 +1,127 @@
+{% extends 'basic.html' %}
+
+{% block content %}
+
+    <div class="pusher">
+        <div class="ui inverted vertical masthead center aligned segment">
+
+            <div class="ui text container">
+                <h1 class="ui header">User Hub for <strong>{{ user.username }}</strong></h1>
+
+            </div>
+        </div>
+    </div>
+
+    <div class="ui container">
+        {#    <p>#}
+        <h3 class="ui header" style="color: blue">
+            Note: When you are not using any resources of Entangled-Photons or Data Acquisition Channels,
+            Please <strong>release</strong> it proactively and timely.
+        </h3>
+        {#    </p>#}
+    </div>
+    <div class="ui divider"></div>
+
+
+
+    <div class="ui container">
+
+        {#EPs#}
+        <h2 class="ui header">Entangled-Photon Sources Occupancy</h2>
+        {#<p class="title" style="font-size: 18px; font-weight:bold;"> Table-基本示例</p>#}
+        {#<p class="subtitle" style="font-size: 12px;"> 我是副标题支持换行哦</p>#}
+        {#        <table class="ui compact celled definition table">#}
+        <table class="ui celled table">
+            <thead>
+            <tr>
+                <th>Channel</th>
+                <th>Remark</th>
+                <th>Status</th>
+                <th>Operation</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for ep in eps %}
+                <tr>
+                    <td>{{ ep.idx }}</td>
+                    <td>{{ ep.info }}</td>
+                    {% if ep.avail %}
+                        {#status#}
+                        <td class="positive"><i class="icon checkmark"></i>Available</td>
+                        {#operation#}
+                        <td>
+                            <button class="ui small disabled button">Apply</button>
+                            <button class="ui small button">Release</button>
+                        </td>
+                    {% else %}
+                        <td class="negative"><i class="icon close"></i>Unavailable</td>
+                        <td>
+                            <button class="ui small button">Apply</button>
+                            <button class="ui small disabled button">Release</button>
+                        </td>
+
+                    {% endif %}
+                </tr>
+            {% endfor %}
+            </tbody>
+            <tfoot class="full-width">
+            <tr>
+                <th colspan="4">
+                    <button class="ui right floated secondary button">Release All</button>
+                </th>
+            </tr>
+            </tfoot>
+        </table>
+    </div>
+    <div class="ui divider"></div>
+
+
+    {#SNSPD#}
+    <div class="ui container">
+        <h2 class="ui header">Data Acquisition Channels Occupancy</h2>
+        {#        <table class="ui compact celled definition table">#}
+        <table class="ui celled table">
+
+            <thead>
+            <tr>
+                <th>Channel</th>
+                <th>Status</th>
+                {#            <th>Remark</th>#}
+                <th>Operation</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for spd in spds %}
+                <tr>
+                    <td>{{ spd.idx }}</td>
+                    {#                <td>{{ sp.utility }}</td>#}
+                    {% if spd.avail %}
+                        {#status#}
+                        <td class="positive"><i class="icon checkmark"></i>Available</td>
+                        {#operation#}
+                        <td>
+                            <button class="ui small disabled button">Apply</button>
+                            <button class="ui small button">Release</button>
+                        </td>
+                    {% else %}
+                        <td class="negative"><i class="icon close"></i>Unavailable</td>
+                        <td>
+                            <button class="ui small button">Apply</button>
+                            <button class="ui small disabled button">Release</button>
+                        </td>
+
+                    {% endif %}
+                </tr>
+            {% endfor %}
+            </tbody>
+            <tfoot class="full-width">
+            <tr>
+                <th colspan="4">
+                    <button class="ui right floated secondary button">Release All</button>
+                </th>
+            </tr>
+            </tfoot>
+        </table>
+    </div>
+
+{% endblock %}

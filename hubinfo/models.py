@@ -28,7 +28,5 @@ class SPDsLinks(models.Model):
     linkage = models.BooleanField(verbose_name='linkage status')  # True/False
     out_ch = models.IntegerField(verbose_name='output channel')  # 1~8
 
-
-
 # class SPDLogicPhysicMap(models.Model):
 #     pass

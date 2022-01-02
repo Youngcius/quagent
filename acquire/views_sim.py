@@ -52,6 +52,8 @@ def index(request):
     return render(request, 'acquire.html', {'channels': list(range(1, n_channels + 1)), 'interval': interval})
 
 
+
+
 lister = Lister(counter_config['n_values'])
 
 
@@ -182,3 +184,13 @@ def counter_download(request):
     print('fname: {}'.format(fname))
     response['Content-Disposition'] = 'attachment;filename="{}"'.format(fname)
     return response
+
+
+# TODO
+# select作为主界面
+
+# TODO
+# 原acquire界面改为counter
+
+# TODO
+# 图形库，user-specific figure

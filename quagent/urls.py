@@ -19,9 +19,7 @@ from django.contrib.auth import login, logout
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    # path('login/', login),
     path('accounts/', include('django.contrib.auth.urls')),
-    # path('login/', include('login.urls')),
     path('foreign/', include('foreign.urls')),
     # path('produce/', include('produce.urls')),
     path('acquire/', include('acquire.urls'), name='acquire'),

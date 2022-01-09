@@ -1,236 +1,66 @@
 {% extends 'basic.html' %}
 
 {% block content %}
-    {#  1.  更新测量参数#}
+
     <div class="ui container">
-        <h2 class="ui header">Counter Measurement Parameter Configuration</h2>
-        <div class="ui form" id="form-config">
-            <label for="binwidth">binwidth (ps)</label>
-            {#    default: 1e12#}
-            <input type="number" id="binwidth" name="binwidth" min="100" max="10000000000000" value="1000000000000"
-                   step="100"><br>
-            {#            <label for="unit">time unit</label>#}
-            {#            <input type="text">#}
-            <label for="n_values">n_values</label>
-            <input type="number" id="n_values" name="n_values" min="10" max="1000000" value="1000" step="10"><br>
-            {% for ch in channels %}
-                {#    e.g.    channels: [1,2,3,...,8]#}
-                <input type="checkbox" id="channels" name="channels" value="{{ ch }}" class="ui checkbox">
-                <label for="channels">channel {{ ch }}</label><br>
-            {% endfor %}
-            <input type="submit" value="Update" id="update" class="ui primary button">
-            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-            <input type="submit" value="Start" id="start" class="ui secondary primary button">
-            <input type="submit" value="Stop" id="stop" class="ui secondary primary button">
+        <h2 class="ui header">Select your Measurement experiment</h2>
+
+        <div class="ui middle aligned divided list">
+            <div class="item">
+                <div class="right floated content">
+                    <a href="{% url 'counter' %}" target="_blank">
+                        <div class="ui primary button">Select</div>
+                    </a>
+                </div>
+                {#                <img class="ui avatar image" src="/images/avatar2/small/lena.png">#}
+                <div class="content">
+                    <label class="ui label">Counter</label>
+                    Measurement counts in a fixed time bin.
+                </div>
+            </div>
+            <div class="item">
+                <div class="right floated content">
+                    <a href="{% url 'correlation' %}" target="_blank">
+                        <div class="ui primary button">Select</div>
+                    </a>
+                </div>
+                {#                <img class="ui avatar image" src="/images/avatar2/small/lindsay.png">#}
+                <div class="content">
+                    <label class="ui label">Correlation</label>
+                    Time-correlated detection of one/multi-way photon flew.
+                </div>
+            </div>
+            <div class="item">
+                <div class="right floated content">
+                    <a href="{% url startstop %}" target="_blank">
+                        <div class="ui primary button">Select</div>
+                    </a>
+                </div>
+                {#                <img class="ui avatar image" src="/images/avatar2/small/mark.png">#}
+                <div class="content">
+                    <label class="ui label">StartStop</label>
+                    Start-Stop Measurement based on pulses.
+                </div>
+            </div>
+            <div class="item">
+                <div class="right floated content">
+                    <a href="{% url 'timedifferences' %}" target="_blank">
+                        <div class="ui primary button">Select</div>
+                    </a>
+                </div>
+                {#                <img class="ui avatar image" src="/images/avatar2/small/molly.png">#}
+                <div class="content">
+                    <label class="ui label">TimeDifferences</label>
+                    Measuring the time differences between pulses.
+                </div>
+            </div>
 
 
         </div>
 
-        <label for="download-time" class="ui label">Time for downloading (ms)</label>
-        <input type="number" max="1000000" step="1" min="1" id="download-time">&nbsp;&nbsp;&nbsp;&nbsp;
-        <input type="submit" value="Download" id="download" class="ui primary button">
-
     </div>
-
-    <div class="ui divider"></div>
-
-    <script>
-        {#ajax 请求更新表单数据#}
-        $('#update').click(function () {
-            {#取出数据#}
-            var binwidth = $('#binwidth').val();
-            var n_values = $('#n_values').val();
-            var channels = [];
-
-            $("input[name='channels']:checked").each(function (i) {//把所有被选中的复选框的值存入数组
-                channels[i] = $(this).val();
-            });
-            {#发送请求#}
-            let formdata = {binwidth: binwidth, n_values: n_values, channels: channels};
-
-            $.ajax({
-                url: "{% url 'update-config' %}",
-                type: 'GET',
-                data: formdata,
-                success: function (response) {
-                    console.log(response, typeof response)
-                }
-            })
-
-
-        })
-        $('#start').click(function () {
-            // start the Counter
-            $.ajax({
-                url: "{% url 'start-counter' %}",
-                type: 'GET',
-                success: function (response) {
-                    console.log(response, typeof response);
-                    {#alert(response)#}
-
-                }
-            })
-        })
-        $('#stop').click(function () {
-            // stop the Counter
-            $.ajax({
-                url: "{% url 'stop-counter' %}",
-                type: 'GET',
-                success: function (response) {
-                    console.log(response, typeof response);
-                    {#alert(response)#}
-
-                }
-            })
-
-        })
-
-
-        {#下载数据#}
-        $('#download').click(function () {
-            var T = Number($('#download-time').val() / 1e3);
-            var a = document.createElement('a');
-            a.href = "{% url 'counter-download' %}" + "?T=" + String(T); // GET请求格式
-            a.click();
-            {#$.ajax({#}
-            {#    url: "{% url 'counter-download' %}",#}
-            {#    type: 'GET',#}
-            {#    data: {T: T}, // ms --> s#}
-                {#success: function (response) {#}
-                {#    // 数据在 response 中#}
-                    {#alert(response);#}
-                    {#alert(typeof response);#}
-                    {#alert(response.path);#}
-                    {#location.href = response.path;#}
-                    {#alert(response.data)#}
-                    {#var a = document.createElement('a');#}
-                    {#a.href = "{% url 'counter-download' %}" + "?T=" + String(T); // GET请求格式#}
-                    {#a.click();#}
-                {#    console.log(response, typeof response);#}
-                {# }#}
-            {# })#}
-        })
-    </script>
-
-
-    {#     2.   绘图表现 TimeTagger#}
-    <div class="ui container">
-        <div id="bar" style="width:1200px; height:600px;"></div>
-    </div>
-    <script>
-        var chart = echarts.init(document.getElementById('bar'), 'white', {renderer: 'canvas'});
-        var old_data = [];
-        var interval = $('#binwidth').val() / 1e9;
-        $('#update').click(function () {
-            {#根据binwidth计算刷新频率#}
-            {#interval = $('#binwidth').val() / 1e9;#}
-            {#alert(String(interval) + typeof (interval));#}
-            {#清空图中数据#}
-            {#alert(interval);#}
-            chart.clear();
-        })
-
-        $(
-            function () {
-                fetchData(chart);
-
-                var timeIt = setInterval(fetchData, interval);
-
-                function fetchData() {
-                    $.ajax({
-                        type: "GET",
-                        {#'counter' 是视图函数的名字（配置url时）#}
-                        url: "{% url 'counter' %}",
-                        dataType: "json",
-                        success: function (options) {
-                            {#chart.clearData()#}
-                            chart.setOption(options);
-                            {#old_data = chart.getOption().series[0].data;#}
-                            {#old_data form: [..., [xi, yi], ...]#}
-                        }
-                    });
-                    if (Math.round($('#binwidth').val() / 1e9) != Math.round(interval)) {
-                        interval = $('#binwidth').val() / 1e9;
-                        {#alert(String(interval) + ' ms!!!');#}
-                        clearInterval(timeIt);
-                        timeIt = setInterval(fetchData, interval)
-                    }
-                }
-            }
-        );
-        {##}
-        {##}
-        {#function getDynamicData() {#}
-        {#    $.ajax({#}
-        {#        type: "GET",#}
-        {#        url: "{% url 'counter-update' %}",#}
-        {#        dataType: 'json',#}
-        {#        success: function (result) {#}
-        {#            old_data.push([result.name, result.value]);#}
-        {#            chart.setOption({#}
-        {#                series: [{#}
-        {#                    data: old_data#}
-        {#                }]#}
-        {#            });#}
-        {#        }#}
-        {#    });#}
-        {# } #}
-
-    </script>
-
-    {##}
-    {##}
-    {# 2.   绘图表现 Example#}
-    {#    <div class="ui container">#}
-    {#        <div id="bar" style="width:1200px; height:600px;"></div>#}
-    {#    </div>#}
-    {#    <script>#}
-    {#        var chart = echarts.init(document.getElementById('bar'), 'white', {renderer: 'canvas'});#}
-    {#        var old_data = [];#}
-    {#        $(#}
-    {#            function () {#}
-    {#                fetchData(chart);#}
-    {#                setInterval(fetchData, {{ interval }});#}
-    {#            }#}
-    {#        );#}
-    {##}
-    {#        function fetchData() {#}
-    {#            $.ajax({#}
-    {#                type: "GET",#}
-    {#'counter' 是视图函数的名字（配置url时）#}
-    {#                url: "{% url 'counter' %}",#}
-    {#                dataType:#}
-    {#                    "json",#}
-    {#                success: function (result) {#}
-    {#                    var options = result.data;#}
-    {#                    chart.setOption(options);#}
-    {#                    old_data = chart.getOption().series[0].data;#}
-    {#old_data form: [..., [xi, yi], ...]#}
-    {#                }#}
-    {#            })#}
-    {#            ;#}
-    {#        }#}
-    {##}
-    {#        function getDynamicData() {#}
-    {#            $.ajax({#}
-    {#                type: "GET",#}
-    {#                url: "{% url 'counter-update' %}",#}
-    {#                dataType: 'json',#}
-    {#                success: function (result) {#}
-    {#                    var options = result.data;#}
-    {#                    old_data.push([options.name, options.value]);#}
-    {#                    chart.setOption({#}
-    {#                        series: [{#}
-    {#                            data: old_data#}
-    {#                        }]#}
-    {#                    });#}
-    {#                }#}
-    {#            });#}
-    {#        }#}
-    {##}
-    {#    </script>#}
-    {##}
 
 
 
 {% endblock %}
+

@@ -31,7 +31,7 @@ def select(request):
     Select one kind of Measurement experiment
     """
 
-    return render(request, 'select.html')
+    return render(request, 'acquire.html')
 
 #
 # class CounterBetweenMarker(Model):

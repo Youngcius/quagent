@@ -25,7 +25,6 @@ from django.contrib.auth.decorators import login_required
 
 from .utils import *
 
-
 CurrentConfig.GLOBAL_ENV = Environment(loader=FileSystemLoader("./template/pyecharts"))
 
 counter_config = {
@@ -52,8 +51,6 @@ def index(request):
     return render(request, 'acquire.html', {'channels': list(range(1, n_channels + 1)), 'interval': interval})
 
 
-
-
 lister = Lister(counter_config['n_values'])
 
 
@@ -74,7 +71,6 @@ def update_config(request):
     lister = Lister(counter_config['n_values'])
     # if counter is None:
 
-
     return HttpResponse('update successfully')
 
 
@@ -87,9 +83,6 @@ def start_counter(request):
 def stop_counter(request):
     # counter.stop()
     return HttpResponse('Has stopped the Counter Measurement')
-
-
-
 
 
 # ====================================================================
@@ -136,8 +129,6 @@ def CounterChartUpdateView(request):
     return JsonResponse({'name': 10, 'value': randrange(0, 5)})
 
 
-
-
 data_cache = []
 
 
@@ -177,14 +168,13 @@ def counter_download(request):
     data_with_config['time'] = T
     data_with_config['data'] = np.hstack(data_cache).tolist()
     data_with_config['timestamp'] = str(datetime.datetime.now())
-    response = FileResponse(json.dumps(data_with_config)) # dict --> str
+    response = FileResponse(json.dumps(data_with_config))  # dict --> str
     response['Content-Type'] = 'application/octet-stream'  # 设置头信息，告诉浏览器这是个文件
     fname = 'counting' + str(datetime.date.today()) + str(uuid.uuid4()) + '.json'
-    print('=='*30)
+    print('==' * 30)
     print('fname: {}'.format(fname))
     response['Content-Disposition'] = 'attachment;filename="{}"'.format(fname)
     return response
-
 
 # TODO
 # select作为主界面
@@ -194,3 +184,6 @@ def counter_download(request):
 
 # TODO
 # 图形库，user-specific figure
+
+# TODO
+# 每一个新标签页生成一个token uuid

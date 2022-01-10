@@ -18,6 +18,8 @@
                     Measurement counts in a fixed time bin.
                 </div>
             </div>
+
+
             <div class="item">
                 <div class="right floated content">
                     <a href="{% url 'correlation' %}" target="_blank">
@@ -30,6 +32,8 @@
                     Time-correlated detection of one/multi-way photon flew.
                 </div>
             </div>
+
+
             <div class="item">
                 <div class="right floated content">
                     <a href="{% url 'startstop' %}" target="_blank">
@@ -42,6 +46,8 @@
                     Start-Stop Measurement based on pulses.
                 </div>
             </div>
+
+
             <div class="item">
                 <div class="right floated content">
                     <a href="{% url 'timedifferences' %}" target="_blank">
@@ -54,6 +60,37 @@
                     Measuring the time differences between pulses.
                 </div>
             </div>
+
+
+            <div class="item">
+                <div class="right floated content">
+                    <a href="{% url 'histogram' %}" target="_blank">
+                        <div class="ui primary button">Select</div>
+                    </a>
+                </div>
+                {#                <img class="ui avatar image" src="/images/avatar2/small/molly.png">#}
+                <div class="content">
+                    <label class="ui label">Histogram</label>
+                    histogram of time differences to measure lifetime.
+                </div>
+            </div>
+
+{#            以上是目前已经实现的 @ 2022.01.10#}
+
+
+            <div class="item">
+                <div class="right floated content">
+                    <a href="{% url 'countbetweenmarkers' %}" target="_blank">
+                        <div class="ui primary button">Select</div>
+                    </a>
+                </div>
+                {#                <img class="ui avatar image" src="/images/avatar2/small/molly.png">#}
+                <div class="content">
+                    <label class="ui label">CountBetweenMarkers</label>
+                    Count Between Markers measurement mode.
+                </div>
+            </div>
+
 
 
         </div>

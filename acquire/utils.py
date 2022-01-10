@@ -2,6 +2,8 @@ from django.http import HttpResponse
 import json
 from random import randrange
 import numpy as np
+from numpy.core.fromnumeric import size
+from scipy.stats import norm
 
 
 def response_as_json(data):
@@ -45,3 +47,25 @@ class Lister:
 
     def cur(self):
         return self.l
+
+
+class Correlator:
+    def __init__(self, half_N: int):
+        self.idx = np.arange(-half_N, half_N).tolist()
+        self.val = norm.pdf(self.idx, loc=0, scale=half_N / 2).tolist()
+
+    def new(self):
+        self.randomize()
+        return self.idx, self.val
+
+    def cur(self):
+        return self.idx, self.val
+
+    def randomize(self):
+        half_N = int(len(self.idx) / 2)
+        replaced_num = int(0.1 * half_N)
+        replaced_idx = np.random.choice(self.idx, size=replaced_num, replace=False).tolist()
+        self.val = np.array(self.val)
+        self.val[replaced_idx] = self.val[replaced_idx] * (1 + np.random.randn(replaced_num) * 0.1)
+        self.val = np.abs(self.val)
+        self.val = self.val.tolist()

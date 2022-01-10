@@ -270,5 +270,5 @@ def counter_download(request):
     response = FileResponse(json.dumps(data_with_config))  # dict --> str
     response['Content-Type'] = 'application/octet-stream'  # 设置头信息，告诉浏览器这是个文件
     response['Content-Disposition'] = 'attachment;filename={}'.format(
-        'counting' + str(datetime.date.today()) + str(uuid.uuid4()) + '.json')
+        'counting' + str(datetime.date.today()) + str(uuid.uuid1()) + '.json')
     return response

@@ -1,5 +1,5 @@
 """
-Data acquisition in StartStop mode (Simulation)
+Data acquisition in Histogram mode
 """
 from django.shortcuts import render
 from TimeTaggerRPC import client
@@ -61,27 +61,3 @@ def download(request):
     Download real-time data acquired
     """
     pass
-
-# =====================
-correlator = Correlator(half_N=250)
-
-
-def startstop_fig()->str:
-    hist = charts.Bar()
-    hist.add_xaxis(correlator.idx)  # time index
-    hist.add_yaxis('time diff', correlator.new()[1])  # statistical counts
-    hist.set_global_opts(
-        title_opts=opts.TitleOpts('StartStop Time Diff Counting'),
-        xaxis_opts=opts.AxisOpts(name='time (ps)'),
-        yaxis_opts=opts.AxisOpts(type_='value', name='counts'),
-        datazoom_opts=opts.DataZoomOpts()
-    )
-    fig_str = hist.dump_options_with_quotes()
-    return fig_str
-
-
-def startstop_chart_view(request):
-    return JsonResponse(json.loads(startstop_fig()))
-
-def startstop_chart_update_view(request):
-    return JsonResponse({'name': 10, 'value': randrange(0, 5)})

@@ -28,7 +28,7 @@
         </div>
 
         <label for="download-time" class="ui label">Time for downloading (ms)</label>
-        <input type="number" max="1000000" step="1" min="1" id="download-time">&nbsp;&nbsp;&nbsp;&nbsp;
+        <input type="number" max="1000000" step="10" min="10" id="download-time">&nbsp;&nbsp;&nbsp;&nbsp;
         <input type="submit" value="Download" id="download" class="ui primary button">
 
     </div>
@@ -50,7 +50,7 @@
             let formdata = {binwidth: binwidth, n_values: n_values, channels: channels};
 
             $.ajax({
-                url: "{% url 'update-config' %}",
+                url: "{% url 'counter-update-config' %}",
                 type: 'GET',
                 data: formdata,
                 success: function (response) {
@@ -63,7 +63,7 @@
         $('#start').click(function () {
             // start the Counter
             $.ajax({
-                url: "{% url 'start-counter' %}",
+                url: "{% url 'counter-start' %}",
                 type: 'GET',
                 success: function (response) {
                     console.log(response, typeof response);
@@ -75,7 +75,7 @@
         $('#stop').click(function () {
             // stop the Counter
             $.ajax({
-                url: "{% url 'stop-counter' %}",
+                url: "{% url 'counter-stop' %}",
                 type: 'GET',
                 success: function (response) {
                     console.log(response, typeof response);
@@ -141,7 +141,7 @@
                     $.ajax({
                         type: "GET",
                         {#'counter' 是视图函数的名字（配置url时）#}
-                        url: "{% url 'counter' %}",
+                        url: "{% url 'counter-chart' %}",
                         dataType: "json",
                         success: function (options) {
                             {#chart.clearData()#}

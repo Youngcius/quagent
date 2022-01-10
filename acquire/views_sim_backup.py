@@ -176,11 +176,7 @@ def counter_download(request):
     response['Content-Disposition'] = 'attachment;filename="{}"'.format(fname)
     return response
 
-# TODO
-# select作为主界面
 
-# TODO
-# 原acquire界面改为counter
 
 # TODO
 # 图形库，user-specific figure

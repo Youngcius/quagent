@@ -1,6 +1,9 @@
 {% extends 'basic.html' %}
 
-
+{#    - binwidth#}
+{#    - n_bins#}
+{#    - channel 1#}
+{#    - channel 2 (optional)#}
 
 {% block content %}
     {#  1.  更新测量参数#}
@@ -41,7 +44,7 @@
         </div>
 
         <label for="download-time" class="ui label">Time for downloading (ms)</label>
-        <input type="number" max="1000000" step="1" min="1" id="download-time">&nbsp;&nbsp;&nbsp;&nbsp;
+        <input type="number" max="1000000" step="10" min="10" id="download-time">&nbsp;&nbsp;&nbsp;&nbsp;
         <input type="submit" value="Download" id="download" class="ui primary button">
 
     </div>
@@ -64,7 +67,7 @@
 
             {#TODO: 暂时修改到了这里#}
             $.ajax({
-                url: "{% url 'update-config' %}",
+                url: "{% url 'correlation-update-config' %}",
                 type: 'GET',
                 data: formdata,
                 success: function (response) {
@@ -77,7 +80,7 @@
         $('#start').click(function () {
             // start the Counter
             $.ajax({
-                url: "{% url 'start-counter' %}",
+                url: "{% url 'correlation-start' %}",
                 type: 'GET',
                 success: function (response) {
                     console.log(response, typeof response);
@@ -89,7 +92,7 @@
         $('#stop').click(function () {
             // stop the Counter
             $.ajax({
-                url: "{% url 'stop-counter' %}",
+                url: "{% url 'correlation-stop' %}",
                 type: 'GET',
                 success: function (response) {
                     console.log(response, typeof response);
@@ -105,9 +108,8 @@
         $('#download').click(function () {
             var T = Number($('#download-time').val() / 1e3);
             var a = document.createElement('a');
-            a.href = "{% url 'counter-download' %}" + "?T=" + String(T); // GET请求格式
+            a.href = "{% url 'correlation-download' %}" + "?T=" + String(T); // GET请求格式
             a.click();
-
         })
     </script>
 
@@ -139,7 +141,7 @@
                     $.ajax({
                         type: "GET",
                         {#'counter' 是视图函数的名字（配置url时）#}
-                        url: "{% url 'counter' %}",
+                        url: "{% url 'correlation-chart' %}",
                         dataType: "json",
                         success: function (options) {
                             {#chart.clearData()#}

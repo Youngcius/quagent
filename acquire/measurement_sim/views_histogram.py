@@ -1,5 +1,5 @@
 """
-Data acquisition in StartStop mode (Simulation)
+Data acquisition in Histogram mode (Simulation)
 """
 from django.shortcuts import render
 from TimeTaggerRPC import client
@@ -26,9 +26,9 @@ from django.contrib.auth.decorators import login_required
 from ..utils import *
 
 
-def startstop_page(request):
+def histogram_page(request):
 
-    return render(request, 'measurement/startstop.html')
+    return render(request, 'measurement/histogram.html')
 
 
 def update_config(request):
@@ -38,6 +38,7 @@ def update_config(request):
     - click channel
     - start channel
     - binwidth
+    - n_bins
     """
     pass
 
@@ -62,26 +63,25 @@ def download(request):
     """
     pass
 
-# =====================
-correlator = Correlator(half_N=250)
 
+# ==========================
+correlator = Correlator(250)
 
-def startstop_fig()->str:
+def histogram_fig()->str:
     hist = charts.Bar()
     hist.add_xaxis(correlator.idx)  # time index
     hist.add_yaxis('time diff', correlator.new()[1])  # statistical counts
     hist.set_global_opts(
-        title_opts=opts.TitleOpts('StartStop Time Diff Counting'),
-        xaxis_opts=opts.AxisOpts(name='time (ps)'),
+        title_opts=opts.TitleOpts('Histogram'),
+        xaxis_opts=opts.AxisOpts(name='bin (binwidth = {} ps)'.format('X')),
         yaxis_opts=opts.AxisOpts(type_='value', name='counts'),
-        datazoom_opts=opts.DataZoomOpts()
     )
     fig_str = hist.dump_options_with_quotes()
     return fig_str
 
 
-def startstop_chart_view(request):
-    return JsonResponse(json.loads(startstop_fig()))
+def histogram_chart_view(request):
+    return JsonResponse(json.loads(histogram_fig()))
 
-def startstop_chart_update_view(request):
+def histogram_chart_update_view(request):
     return JsonResponse({'name': 10, 'value': randrange(0, 5)})

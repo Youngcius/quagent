@@ -42,5 +42,6 @@ class Lister:
         a = randrange(0, 100)
         self.l = self.l[1:] + [a]
         return self.l
+
     def cur(self):
         return self.l

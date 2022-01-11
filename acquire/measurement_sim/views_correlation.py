@@ -32,7 +32,7 @@ def correlation_page(request):
 
 # ==================================
 # glocal variables
-half_N = 250
+half_N = 30
 correlator = Correlator(half_N)
 # data_cache = []
 correlation_config = {

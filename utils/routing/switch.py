@@ -42,6 +42,21 @@ class Switcher:
         except:
             return None, False
 
+    # ser = serial.Serial(self.port, 19200, timeout=0.1)
+    #
+    # byte_cmd = bytes(command, 'utf-8')
+    #
+    # ser.write(byte_cmd)
+    #
+    # response = ser.readline()
+    #
+    # str_response = response.decode('utf-8')
+    #
+    # ser.close()
+
+
+
+
     def get_status(self):
         """
         Status of current switches
@@ -59,7 +74,7 @@ class Switcher:
         """
         status, self.connected = self.get_status()
         if self.connected:
-            values_str = status.split('_')[3:]
+            values_str = status.strip('<').strip('>').split('_')[3:]
             return list(map(int, values_str))
         else:
             return None
@@ -72,7 +87,7 @@ class Switcher:
             raise ValueError('value "gate" is larger than {}'.format(self.n_in))
         status, self.connected = self.get_status()
         if self.connected:
-            return status.split('_')[3:][gate - 1]
+            return status.strip('<').strip('>').split('_')[3:][gate - 1]
         else:
             return None
 
@@ -89,11 +104,10 @@ class Switcher:
         :param gate: gate index of the input terminal
         :param channel: channel index of the output terminal
         """
-        if self.n_out < 10:
-            cmd = '<{}OUT{}>'.format(gate, channel)
-        else:
-            cmd = '<{}OUT{}>'.format(gate, str(channel).zfill(2))
+        cmd = '<{}OUT{}>'.format(gate, str(channel).zfill(2))
+
         _, self.connected = self.send_command(cmd)
+        print('has sent command', cmd, self.connected)
         return self.connected
 
     @property
@@ -112,8 +126,8 @@ class SPDSwitcher(Switcher):
 
     def __init__(self):
         super(SPDSwitcher, self).__init__()
-        self.n_inner = 8
-        self.n_outer = 8
+        self.n_in = 8
+        self.n_out = 8
         self.out_ports = ['1', '2', '3', '4', '5', '6', '7', '8']
         self.name = '8x8 SPDs Switcher'
 
@@ -125,8 +139,8 @@ class EPSwitcher(Switcher):
 
     def __init__(self):
         super(EPSwitcher, self).__init__()
-        self.n_inner = 5
-        self.n_outer = 16
+        self.n_in = 5
+        self.n_out = 16
         self.out_ports = ['01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11', '12', '13', '14', '15',
                           '16']
         self.name = '5x16 EPs Switcher'

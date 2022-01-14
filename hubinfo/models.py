@@ -11,7 +11,7 @@ class EPsLinks(models.Model):
     At most consists of 80 records.
     """
     user = models.ForeignKey(User, on_delete=models.CASCADE)
-    # 每个用户 16 条记录
+    # 每个用户 16 条记录, 每个 user 实际代表一个 ”lab“
     in_ch = models.IntegerField(verbose_name='input channel')  # 1~5
     linkage = models.BooleanField(verbose_name='linkage status')  # True/False
     out_ch = models.IntegerField(verbose_name='output channel')  # 1~16

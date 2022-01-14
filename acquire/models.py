@@ -44,15 +44,4 @@ class Film(Model):
     pass
 
 
-def string_to_list(s):
-    """
-    e.g. '124' --> [1, 2, 4]
-    """
-    return list(map(int, list(s)))
 
-
-def list_to_string(l):
-    """
-    e.g. [1, 2, 4] --> '124'
-    """
-    return ''.join(list(map(str, l)))

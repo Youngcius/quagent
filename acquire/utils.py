@@ -2,7 +2,6 @@ from django.http import HttpResponse
 import json
 from random import randrange
 import numpy as np
-from numpy.core.fromnumeric import size
 from scipy.stats import norm
 
 
@@ -34,6 +33,20 @@ def json_error(error_string="error", code=500, **kwargs):
     }
     data.update(kwargs)
     return response_as_json(data)
+
+
+def string_to_list(s):
+    """
+    e.g. '124' --> [1, 2, 4]
+    """
+    return list(map(int, list(s)))
+
+
+def list_to_string(l):
+    """
+    e.g. [1, 2, 4] --> '124'
+    """
+    return ''.join(list(map(str, l)))
 
 
 class Lister:

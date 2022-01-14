@@ -2,8 +2,7 @@
 Data acquisition Counter mode
 """
 from django.shortcuts import render
-from TimeTaggerRPC import client
-from utils.hardware.host import ipv4, tagger_port
+
 from django.http import HttpRequest, HttpResponse, JsonResponse, FileResponse, Http404
 from django.http import HttpResponseServerError  # 5xx error
 import numpy as np
@@ -25,11 +24,24 @@ from random import randrange
 from ..utils import *
 from ..models import *
 
+
+from TimeTaggerRPC import client
+from utils.hardware.host import ipv4, tagger_port
+
+import TimeTagger as tt
+
+
+
 # JsonResponse = json_response
 # JsonError = json_error
 
 CurrentConfig.GLOBAL_ENV = Environment(loader=FileSystemLoader("./template/pyecharts"))
-#
+
+
+
+
+# =========================================
+# global variable
 # counter_config = {
 #     'binwidth': int(1e12),  # unit: ps
 #     'n_values': int(1e3),
@@ -39,56 +51,217 @@ n_channels = 8
 counter = None
 tagger = None
 
+# =========================================
+
 # tt = client.createProxy(host=ipv4, port=tagger_port)
 
-import TimeTagger as tt
+# ////////////////////////////////////////////////////////////////////////
 
 
-def index(request):
+
+# ====================================================================
+# 以下是 Example（模拟数据）
+
+lister = Lister(counter_config['n_values']) # 模拟数据生成器
+data_cache = []
+
+def counter_fig() -> str:
+    line = charts.Line()
+    line.add_xaxis(list(range(0, counter_config['n_values'] + 1)))
+    for ch in counter_config['channels']:
+        line.add_yaxis(series_name='channel {}'.format(ch), y_axis=lister.new())
+    line.set_global_opts(title_opts=opts.TitleOpts(title='Counting'),
+                         xaxis_opts=opts.AxisOpts(type_='value'),
+                         yaxis_opts=opts.AxisOpts(type_='value'))
+    fig_str = line.dump_options_with_quotes()
+
+    return fig_str
+
+
+# CounterChartView只是局部response
+def counter_chart_view(request):
+    return JsonResponse(json.loads(counter_fig()))
+
+
+def counter_chart_update_view(request):
+    return JsonResponse({'name': 10, 'value': randrange(0, 5)})
+
+
+
+
+
+
+def download(request):
+    """
+    模拟数据
+    """
+    T = float(request.GET.get('T'))  # unit: s
+    t = counter_config["binwidth"] * counter_config['n_values'] / 1e12  # ps --> s
+    data_cache.clear()  # clear cache firstly
+
+    def get_data():
+        data_cache.append(lister.cur())
+
+    N = int(T / t)
+
+    print('下载时间：', T, '单位时间：', t)
+
+    def create_get_data_thread(name=None):
+        return threading.Thread(target=get_data, name=name)
+
+    if N == 0:
+        thread = create_get_data_thread()
+        time.sleep(T)
+        thread.start()
+        # thread.join()
+    else:
+        for i in range(N + 1):
+            thread = create_get_data_thread()
+            time.sleep(t)
+            thread.start()
+
+    data_with_config = copy.deepcopy(counter_config)
+    data_with_config['binwidth'] /= 1e12  # ps --> s
+    data_with_config['time'] = T
+    data_with_config['data'] = np.hstack(data_cache).tolist()
+    data_with_config['timestamp'] = str(datetime.datetime.now())
+    response = FileResponse(json.dumps(data_with_config))  # dict --> str
+    response['Content-Type'] = 'application/octet-stream'  # 设置头信息，告诉浏览器这是个文件
+    fname = 'counting' + str(datetime.date.today()) + str(uuid.uuid1()) + '.json'
+    print('==' * 30)
+    print('fname: {}'.format(fname))
+    response['Content-Disposition'] = 'attachment;filename="{}"'.format(fname)
+    return response
+
+
+
+
+# /////////////////////////////////////////////////////////////////
+
+
+
+
+def update_config(request):
+    # AJAX    GET
+    print(request.GET)
+    binwidth = int(request.GET.get('binwidth'))
+    n_values = int(request.GET.get('n_values'))
+    channels = list(map(int, request.GET.getlist('channels[]')))  # 注意参数名这里有个 []
+    counter_config['binwidth'] = binwidth
+    counter_config['n_values'] = n_values
+    counter_config['channels'] = channels
+
+    print(counter_config)
+    # 更新参数时就“新”创建 Counter & auto-start
+    global lister
+    lister = Lister(counter_config['n_values'])
+    return HttpResponse('update successfully')
+
+def start(request):
+    # counter.start()
+    return HttpResponse('Has started the Counter Measurement')
+
+
+def stop(request):
+    # counter.stop()
+    return HttpResponse('Has stopped the Counter Measurement')
+
+
+def countser_page(request):
+
+
+    # interval = int(counter_config['binwidth'] / 1e9)  # ps --> ms
+    # print('inverval: ', interval)
+    # if tagger is None:
+    # tagger = tt.createTimeTagger(host=ipv4, port=tagger_port)
+    # tagger = tt.createTimeTagger()
+    # for ch in range(1, n_channels + 1):
+    #     tagger.setTestSignal(ch, True)
+
+    return render(request, 'measurement/counter.html', {'channels': list(range(1, n_channels + 1))})
+
+
+
+
+
+    #
+    # interval = int(counter_config['binwidth'] / 1e9)  # ps --> ms
+    # print('inverval: ', interval)
+    # global tagger
+    # # if tagger is None:
+    # # tagger = tt.createTimeTagger(host=ipv4, port=tagger_port)
+    # # tagger = tt.createTimeTagger()
+    # # for ch in range(1, n_channels + 1):
+    # #     tagger.setTestSignal(ch, True)
+    #
+    # return render(request, 'acquire.html', {'channels': list(range(1, n_channels + 1)), 'interval': interval})
+
+
+
+
+
+
+def counter_page(request):
     interval = int(1e3)  # ps --> ms
     print('interval: ', interval)
     global tagger
     if tagger is None:
-        print('...........................................creating...........................................')
+        print('...........................................creating tagger...........................................')
         # tagger = tt.createTimeTagger(host=ipv4, port=tagger_port)
-        print('=' * 20, tt.scanTimeTagger(), '=' * 20)
-        tagger = tt.createTimeTagger()
-        for ch in range(1, n_channels + 1):  # simulation signals
+        print('available tagger(s):', '=' * 10, tt.scanTimeTagger(), '=' * 10)
+        try:
+            tagger = tt.createTimeTagger()
+        except RuntimeError:
+            return HttpResponseServerError('Sorry, The Time Tagger on server is not available now!')
+
+        for ch in range(1, n_channels + 1):  # simulation signals TODO 改动nchannels
             tagger.setTestSignal(ch, True)
         # print(tagger,type(tagger))
 
     print(tagger)
     if request.user.username not in user_detector_map.keys():
         user_detector_map[request.user.username] = {}
-    return render(request, 'acquire.html', {'channels': list(range(1, n_channels + 1)), 'interval': interval})
+
+    avail_channels = get_avail_ch(request.user.username) # e.g. [1, 3], or [5,7,8]
+
+    if len(avail_channels) ==0:
+        return HttpResponseServerError('There is not available detection channel(s) for you.\nYou should book some of them first.')
+    else:
+        return render(request, 'measurement/counter.html', {'channels': avail_channels})
 
 
-# lister = Lister(counter_config['n_values'])
-
-from typing import Callable
 
 
 class UserDetector:
     """
     Pair of one User and one Measurement instance
     """
-    detector_types = ['Counter', 'Correlation',
-                      'StartStop', 'CounterBetweenMarker',
-                      'TimeDifferences', 'Histogram', 'Flim']
+    detector_types = ['Counter', 'CounterBetweenMarkers',
+                      'StartStop', 'Correlation',
+                      'TimeDifferences', 'Histogram']
 
-    def __init__(self, username: str):
+    def __init__(self, username: str, mode: str):
+        """
+        Initialize object, set its username and measurement mode
+        """
         self.username = username
-        self.type = type
+        if mode not in self.detector_types:
+            raise ValueError('{} is not a supported measurement mode'.format(mode))
+        else:
+            self.mode = mode
         self.detector = None
         self.config = None
 
-    def create_detector(self, create_func: Callable):
+    def create_detector(self, tagger: tt.TimeTagger):
         """
-        create_func: Callable, e.g. TimeTagger.Counter
+        :param tagger: Time Tagger instance
         """
-        self.detector = create_func(**self.config)
+        self.detector = getattr(tt, self.mode)(tagger, **self.config)
 
     def set_measure_config(self, **kwargs):
+        """
+        Set configuration parameters for some specific measurement mode
+        """
         self.config = kwargs
 
 
@@ -272,3 +445,11 @@ def counter_download(request):
     response['Content-Disposition'] = 'attachment;filename={}'.format(
         'counting' + str(datetime.date.today()) + str(uuid.uuid1()) + '.json')
     return response
+
+
+
+# TODO
+# 图形库，user-specific figure
+
+# TODO
+# 每一个新标签页生成一个token uuid

@@ -1,21 +1,20 @@
 """
 Switches controller
 """
-import abc
 import serial
-from typing import List, Optional, Tuple
+from typing import List, Optional
 from utils.hardware import host
 
 
-class Switcher(abc.ABC):
+class Switcher:
     def __init__(self):
         self.port = host.serial_ports()[0]
         self.baudrate = 19200
-        self.timeout = 0.1
+        self.timeout = 0.1 # unit: s
         self.connected = None
-        self.n_inner = None
-        self.n_outer = None
-        self.outer_ports = None
+        self.n_in = None
+        self.n_out = None
+        self.out_ports = None
         self.name = 'Switcher base class'
 
     def reset_device(self):
@@ -41,11 +40,11 @@ class Switcher(abc.ABC):
             ser.close()
             return res, True
         except:
-            return None, True
+            return None, False
 
     def get_status(self):
         """
-        Status of current
+        Status of current switches
         ---
         For 5x16 switch: status in form of <STATUS_z_5_a_b_c_d_e>
         1: keys are not latched
@@ -69,8 +68,8 @@ class Switcher(abc.ABC):
         """
         Return outer channel index of one specific gate
         """
-        if gate > self.n_inner:
-            raise ValueError('value "gate" is larger than {}'.format(self.n_inner))
+        if gate > self.n_in:
+            raise ValueError('value "gate" is larger than {}'.format(self.n_in))
         status, self.connected = self.get_status()
         if self.connected:
             return status.split('_')[3:][gate - 1]
@@ -78,7 +77,7 @@ class Switcher(abc.ABC):
             return None
 
     def set_all_outer_channels(self, channel: int) -> bool:
-        if self.n_outer < 10:
+        if self.n_out < 10:
             cmd = '<OUT{}>'.format(channel)
         else:
             cmd = '<OUT{}>'.format(str(channel).zfill(2))
@@ -86,7 +85,11 @@ class Switcher(abc.ABC):
         return self.connected
 
     def set_outer_channel(self, gate: int, channel: int) -> bool:
-        if self.n_outer < 10:
+        """
+        :param gate: gate index of the input terminal
+        :param channel: channel index of the output terminal
+        """
+        if self.n_out < 10:
             cmd = '<{}OUT{}>'.format(gate, channel)
         else:
             cmd = '<{}OUT{}>'.format(gate, str(channel).zfill(2))
@@ -111,8 +114,8 @@ class SPDSwitcher(Switcher):
         super(SPDSwitcher, self).__init__()
         self.n_inner = 8
         self.n_outer = 8
-        self.outer_ports = ['1', '2', '3', '4', '5', '6', '7', '8']
-        self.name = '8x8 SPD Switcher'
+        self.out_ports = ['1', '2', '3', '4', '5', '6', '7', '8']
+        self.name = '8x8 SPDs Switcher'
 
 
 class EPSwitcher(Switcher):
@@ -124,6 +127,6 @@ class EPSwitcher(Switcher):
         super(EPSwitcher, self).__init__()
         self.n_inner = 5
         self.n_outer = 16
-        self.outer_ports = ['01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11', '12', '13', '14', '15',
-                            '16']
+        self.out_ports = ['01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11', '12', '13', '14', '15',
+                          '16']
         self.name = '5x16 EPs Switcher'

@@ -36,6 +36,9 @@ def serial_ports():
 
 
 def serial_available(port):
+    """
+    Distinguish whether a specific port is available
+    """
     port_status = True
     try:
         s = serial.Serial(port)

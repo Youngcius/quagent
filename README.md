@@ -19,7 +19,7 @@ universal technical prototype for quantum networks in terms of the local agent t
 
 ## Quagent v1.0.0
 
-![](https://release-data.bd.bcebos.com/Quanlse_architecture_en.png)
+[comment]: <> (![]&#40;https://release-data.bd.bcebos.com/Quanlse_architecture_en.png&#41;)
 
 We have been trying to enrich and improve Quagent's architecture. The figure below presents its domain framework.
 
@@ -74,6 +74,9 @@ the [corresponding website](https://ua.ilab.agilent.com/landing/3645).
 corresponding hardware platforms. Currently it is applied to the serial systematically linked laboratories of U Arizona.
 So if you are not a person in U Arizona, there is no necessity for you to use it. But if you are a researcher in related
 fields, you can build your own hardware supports and modify Quagent accordingly if possible.
+
+
+## Copyright and License
 
 Quagent uses [Apache-2.0 license](LICENSE).
 

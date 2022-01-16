@@ -1,6 +1,6 @@
 # Quagent: Quantum Agent
 
-Quantum network local agency software (Web operation software)
+局域量子网络本地端 Web 控制系统
 
 [English](README.md) | 简体中文
 
@@ -17,7 +17,7 @@ Quagent (Quantum Agent) 是一个用于量子局域网络 (Quantum Local Agent) 
 
 ## Quagent v1.0.0
 
-我们一直致力于丰富并完善量脉的架构。
+我们一直致力于丰富并完善 Quagent 的架构。
 
 
 ## 使用

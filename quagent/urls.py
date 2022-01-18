@@ -18,6 +18,7 @@ from django.urls import path, include
 from django.contrib.auth import login, logout
 
 urlpatterns = [
+    path('admin/monitor/', include('monitor.urls')),
     path('admin/', admin.site.urls),
     path('accounts/', include('django.contrib.auth.urls')),
     path('foreign/', include('foreign.urls')),

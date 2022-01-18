@@ -38,13 +38,11 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     # 'login.apps.LoginConfig',
     'main.apps.MainConfig',
-    # 'routing.apps.RoutingConfig',
-    # 'configure.apps.ConfigureConfig',
     'foreign.apps.ForeignConfig',
     # 'produce.apps.ProduceConfig',
     'acquire.apps.AcquisitionConfig',
-    # 'hubinfo.apps.HubinfoConfig'
     'hubinfo.apps.HubinfoConfig',
+    'monitor.apps.MonitorConfig',
     'rest_framework',
 
 ]
@@ -83,10 +81,11 @@ WSGI_APPLICATION = 'quagent.wsgi.application'
 # https://docs.djangoproject.com/en/3.2/ref/settings/#databases
 
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
-    },
+    # 'default': {
+    #     'ENGINE': 'django.db.backends.sqlite3',
+    #     'NAME': BASE_DIR / 'db.sqlite3',
+    # },
+    ###################################
     # 10.134.235.69: ECE-2 PC
     # 'default': {
     #     'ENGINE': 'django.db.backends.mysql',
@@ -96,6 +95,15 @@ DATABASES = {
     #     'HOST': '10.134.235.69',
     #     'PORT': '3306'
     # }
+    ###################################
+    'default': {
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'quagent',
+        'USER': 'root',
+        'PASSWORD': 'mimawangle123',
+        'HOST': 'localhost',
+        'PORT': '3306'
+    }
 }
 
 # Password validation

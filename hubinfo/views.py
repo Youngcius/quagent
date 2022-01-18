@@ -23,6 +23,9 @@ class SPDInfo:
 
 @login_required
 def info(request: HttpRequest):
+    """
+    Display information about channels occupied by the current user
+    """
     usr = request.user
     ###############
     # 实际：查询数据库，返回结果

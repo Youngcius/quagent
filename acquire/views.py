@@ -8,3 +8,10 @@ from django.contrib.auth.decorators import login_required
 @login_required
 def index(request):
     return render(request, 'acquire.html')
+
+
+tagger = tt.createTimeTagger(host=ipv4, port=tagger_port)
+tagger = tt.createTimeTagger()
+
+import glob
+

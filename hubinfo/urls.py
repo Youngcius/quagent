@@ -20,3 +20,4 @@ urlpatterns = [
     path('', views.info, name='control'),
 
 ]
+

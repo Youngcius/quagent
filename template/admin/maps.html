@@ -10,6 +10,7 @@
 {#    3. hub links：不同颜色，根据有无终端用户在使用将显示photon flow的有无#}
 {#    4. active hub-node links：green & photon flow；inactive hub-node links：grey#}
 
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -39,6 +40,16 @@
             overflow: hidden;
         }
     </style>
+
+    {#    <script type="text/javascript" src="https://assets.pyecharts.org/assets/echarts.min.js"></script>#}
+    {#    <link rel="stylesheet" href="{% static 'css/semantic.min.css' %}" type="text/css">#}
+    {#    <script src="{% static 'js/semantic.min.css' %}"></script>#}
+    {#    <script src="{% static 'js/jquery.min.js' %}"></script>#}
+    <script src="http://cdn.bootcss.com/jquery/3.1.1/jquery.js"></script>
+    {#        <script src="http://cdn.staticfile.org/semantic-ui/2.2.7/semantic.min.js"></script>#}
+    {#        <link href="http://cdn.staticfile.org/semantic-ui/2.2.7/semantic.min.css" rel="stylesheet">#}
+
+
 </head>
 <body>
 
@@ -65,29 +76,31 @@
         "bio-3": "BIO O84",
 
     };
+    var hubSize = 200;
+    var nodeSize = 120;
+
     var hubData = [
-        {name: 'ECE', value: 180},
-        {name: 'OSC', value: 100},
-        {name: 'MSE', value: 100},
-        {name: 'BIO', value: 100},
-        {name: 'PAS', value: 100},
+        {name: 'ECE', value: Math.round(hubSize * 1.5)},
+        {name: 'OSC', value: hubSize},
+        {name: 'MSE', value: hubSize},
+        {name: 'BIO', value: hubSize},
+        {name: 'PAS', value: hubSize},
     ]
     var nodeData = [
-        {name: 'mse-1', value: 80},
-        {name: 'ece-1', value: 80},
-        {name: 'ece-2', value: 80},
-        {name: 'pas-1', value: 80},
-        {name: 'pas-2', value: 80},
-        {name: 'osc-1', value: 80},
-        {name: 'osc-2', value: 80},
-        {name: 'osc-3', value: 80},
-        {name: 'osc-4', value: 80},
-        {name: 'osc-5', value: 80},
-        {name: 'bio-1', value: 80},
-        {name: 'bio-2', value: 80},
-        {name: 'bio-3', value: 80},
+        {name: 'mse-1', value: nodeSize},
+        {name: 'ece-1', value: nodeSize},
+        {name: 'ece-2', value: nodeSize},
+        {name: 'pas-1', value: nodeSize},
+        {name: 'pas-2', value: nodeSize},
+        {name: 'osc-1', value: nodeSize},
+        {name: 'osc-2', value: nodeSize},
+        {name: 'osc-3', value: nodeSize},
+        {name: 'osc-4', value: nodeSize},
+        {name: 'osc-5', value: nodeSize},
+        {name: 'bio-1', value: nodeSize},
+        {name: 'bio-2', value: nodeSize},
+        {name: 'bio-3', value: nodeSize},
     ];
-    {#var actNode = ['mse-1', 'ece-1', 'osc-3', 'osc-5', 'pas-1', 'bio-1', 'bio-3'];#}
     var nodetoHub = function (node) {
         return node.split('-')[0].toUpperCase();
     };
@@ -123,7 +136,31 @@
         'bio-3': [bio_loc[0] - 0.0006, bio_loc[1] + 0.0004],
     };
 
+    // var convertData = function (data) {
+    //     var res = [];
+    //     for (var i = 0; i < data.length; i++) {
+    //         var geoCoord = geoCoordMap[data[i].name];
+    //         if (geoCoord) {
+    //             res.push({
+    //                 name: data[i].name,
+    //                 value: geoCoord.concat(data[i].value)
+    //             });
+    //         }
+    //     }
+    //     return res;
+    // };
+    // var generateActiveVertex = function (data, actIndex){
+    //     res = [];
+    //
+    //     return res;
+    // }
+    // var generateActiveEdge = function (data, actIndex, reverse = false){
+    //     // default: reverse == false means "node --> hub"
+    //
+    // }
     var geneActNode = function (data, actIndex) {
+        // e.g. element of returned list:
+        // {data: 'ece-1', value: [long, lat]}
         var res = [];
         for (item of data) {
             if (actIndex.includes(item.name)) {
@@ -133,6 +170,8 @@
         return res;
     }
     var geneInActNode = function (data, actIndex) {
+        // element of returned list:
+        // {data: 'ece-1', value: [long, lat]}
         var res = [];
         for (item of data) {
             if (!actIndex.includes(item.name)) {
@@ -143,6 +182,8 @@
     }
 
     var convertVertex = function (data) {
+        // element of returned list:
+        // {name: 'ece-1', value: [long, lat, val]}
         var res = [];
         for (item of data) {
             res.push({
@@ -154,12 +195,13 @@
     };
 
 
-    var convertEdge = function (data, reverse = false) {
+    var convertNodeHubEdge = function (nodeData, reverse = false) {
+        // data is Node data
         // e.g. ece-1 ---> ECE
         var res = [];
         if (reverse) {
             // hub to node
-            for (item of data) {
+            for (item of nodeData) {
                 node = item.name;
                 hub = nodetoHub(node);
                 res.push({
@@ -171,7 +213,7 @@
             }
         } else {
             // node to hub: default
-            for (item of data) {
+            for (item of nodeData) {
                 node = item.name;
                 hub = nodetoHub(node);
                 res.push({
@@ -186,53 +228,127 @@
         return res;
     };
 
-    var geneOptions = function (actNode) {
-        return {
-            // google map component
-            gmap: {
-                // initial options of Google Map
-                // See https://developers.google.com/maps/documentation/javascript/reference/map#MapOptions for details
-                // initial map center, accepts an array like [lng, lat] or an object like { lng, lat }
-                // center: [108.39, 39.9],
-                center: [-110.95068982618264, 32.23380119775424], // student union location
+    var geneActHubIndex = function (actNode) {
+        var actHub = [];
+        for (node of actNode) {
+            actHub.push(nodetoHub(node));
+        }
+        actHub = actHub.filter((v, i, a) => a.indexOf(v) === i);
+        actHub.splice(actHub.indexOf('ECE'), 1);
+        return actHub;
 
-                // initial map zoom
-                zoom: 17,
+    };
+    var geneActHub = function (hubData, actNode) {
+        // generate active hub data
+        var actHub = geneActHubIndex(actNode);
+        var res = [];
+        for (item of hubData) {
+            if (actHub.includes(item.name)) {
+                res.push(item);
+            }
+        }
+        return res;
+    };
+    var geneInActHub = function (hubData, actNode) {
+        // generate inactive hub data
+        var actHub = geneActHubIndex(actNode);
+        actHub = actHub.concat('ECE');
+        var res = [];
+        for (item of hubData) {
+            if (!actHub.includes(item.name)) {
+                res.push(item);
+            }
+        }
+        return res;
+    };
 
-                // whether echarts layer should be rendered when the map is moving. `true` by default.
-                // if false, it will only be re-rendered after the map `moveend`.
-                // It's better to set this option to false if data is large.
-                renderOnMoving: true,
-                // the zIndex of echarts layer for Google Map. `2000` by default.
-                echartsLayerZIndex: 2021,
-                // whether to enable gesture handling. `true` by default.
-                // since v1.4.0
-                roam: true
+    var convertHubHubEdge = function (hubData, reverse = false) {
+        // hubData should not consist 'ECE' item
+        var res = [];
 
-                // More initial options...
-            },
-            tooltip: {
-                trigger: 'item',
-                formatter: '{a}<br /> <strong>{b}</strong>'
-            },
-            title: [
-                {
-                    "text": "State of the Quantum-Network Testbed",
-                    // "subtext": "Entangled photons & signal photons flow",
-                    // "sublink": "http://www.pm25.in",
-                    "left": "center",
-                    "padding": 35,
-                    "itemGap": 10,
-                    "textStyle": {
-                        "color": "black"
-                    },
-                    "subtextStyle": {
-                        "fontSize": 15,
-                        "color": "red",
-                    }
+        if (reverse) {
+            // ECE --> Other
+            for (item of hubData) {
+                var geoC = [
+                    geoCoordMap['ECE'],
+                    geoCoordMap[item.name],
+                ];
+                res.push({
+                    fromName: 'ECE',
+                    toName: item.name,
+                    coords: geoC,
+                    value: 10
+                });
+            }
+        } else {
+            // Other --> ECE
+            for (item of hubData) {
+                res.push({
+                    fromName: item.name,
+                    toName: 'ECE',
+                    coords: [
+                        geoCoordMap[item.name],
+                        geoCoordMap['ECE']
+                    ],
+                    value: 10
+                });
+            }
+        }
+
+        return res;
+    };
+
+    var optionPrevious = {
+        // google map component
+        gmap: {
+            // initial options of Google Map
+            // See https://developers.google.com/maps/documentation/javascript/reference/map#MapOptions for details
+            // initial map center, accepts an array like [lng, lat] or an object like { lng, lat }
+            // center: [108.39, 39.9],
+            center: [-110.95068982618264, 32.23383119775424], // student union location
+
+            // initial map zoom
+            zoom: 16.5,
+
+            // whether echarts layer should be rendered when the map is moving. `true` by default.
+            // if false, it will only be re-rendered after the map `moveend`.
+            // It's better to set this option to false if data is large.
+            renderOnMoving: true,
+            // the zIndex of echarts layer for Google Map. `2000` by default.
+            echartsLayerZIndex: 2021,
+            // whether to enable gesture handling. `true` by default.
+            // since v1.4.0
+            roam: true
+
+            // More initial options...
+        },
+        tooltip: {
+            trigger: 'item',
+            formatter: '{a}<br /> <strong>{b}</strong>'
+        },
+        title: [
+            {
+                "text": "Quantum-Network Testbed State",
+                // "subtext": "Entangled photons & signal photons flow",
+                // "sublink": "http://www.pm25.in",
+                "left": "center",
+                "padding": 60,
+                "itemGap": 10,
+                "textStyle": {
+                    "color": "black",
+                    "fontSize": 35
+                },
+                "subtextStyle": {
+                    "fontSize": 15,
+                    "color": "red",
                 }
-            ],
-            animation: true,
+            }
+        ],
+        animation: true,
+    };
+
+    var geneOptionsSeries = function (actNode) {
+        return {
             series: [
                 {
                     // 黑色 闪烁
@@ -257,8 +373,6 @@
                         formatter: '{b}',
                         position: 'right',
                         show: true,
-                        // color: 'red'
-                        // fontSize: 15
                     },
                     itemStyle: {
                         color: 'black',
@@ -267,8 +381,6 @@
                     },
 
                 },
-
-
                 {
                     // active node
                     // 蓝色 (闪烁）
@@ -277,27 +389,30 @@
                     coordinateSystem: 'gmap',
                     zlevel: 3,
                     data: convertVertex(geneActNode(nodeData, actNode)),
+
                     symbolSize: function (val) {
-                        return val[2] / 10;
-                    },
-                    showEffectOn: 'render',
-                    rippleEffect: {
-                        brushType: 'stroke'
+                        return val[2] / 13;
                     },
                     encode: {
                         value: 2,
                         lng: 0,
                         lat: 1
                     },
-
+                    showEffectOn: 'render',
+                    rippleEffect: {
+                        brushType: 'stroke'
+                    },
                     label: {
                         formatter: '{b}',
                         position: 'right',
-                        show: false
+                        show: false,
                     },
                     itemStyle: {
-                        color: 'blue'
+                        color: 'blue',
+                        shadowBlur: 10,
+                        shadowColor: '#333'
                     },
+
                 },
 
                 {
@@ -322,134 +437,15 @@
                         show: false
                     },
                     itemStyle: {
-                        color: '#128ac1'
-                    },
-                },
+                        color: '#323232',
 
+//                     color: '#128ac1',
+                        // color:'grey',
 
-                {
-                    // active EPS links (between hubs) (all active)
-                    // 黄绿色 line
-                    // 红色 photon flow
-                    name: 'EPS link',
-                    type: 'lines',
-                    coordinateSystem: 'gmap',
-                    zlevel: 2,
-                    effect: {
-                        show: true,
-                        period: 6,
-                        trailLength: 0.2,
-                        color: 'red',
-                        symbol: 'circle',
-                        symbolSize: 5
-                    },
-                    lineStyle: {
-                        normal: {
-                            color: '#a6c84c',
-                            width: 1,
-                            curveness: 0.07
-                        }
-                    },
-                    data: [
-                        {
-                            fromName: 'ECE',
-                            toName: 'MSE',
-                            coords: [
-                                geoCoordMap['ECE'],
-                                geoCoordMap['MSE']
-                            ],
-                            value: 10
-                        },
-                        {
-                            fromName: 'ECE',
-                            toName: 'PAS',
-                            coords: [
-                                geoCoordMap['ECE'],
-                                geoCoordMap['PAS']
-                            ],
-                            value: 10
-                        },
-                        {
-                            fromName: 'ECE',
-                            toName: 'OSC',
-                            coords: [
-                                geoCoordMap['ECE'],
-                                geoCoordMap['OSC']
-                            ]
-                        },
-                        {
-                            fromName: 'ECE',
-                            toName: 'BIO',
-                            coords: [
-                                geoCoordMap['ECE'],
-                                geoCoordMap['BIO']
-                            ]
-                        }
-                    ]
-                },
+                        // color:'lightblue',
+                        edgeColor: 'black',
 
-
-                {
-                    // active SPD links (between hubs) (all active)
-                    // 棕色 line
-                    // 紫色 photon flow
-                    name: 'SPD link',
-                    type: 'lines',
-                    coordinateSystem: 'gmap',
-                    zlevel: 2,
-                    effect: {
-                        show: true,
-                        period: 6,
-                        trailLength: 0.2,
-                        color: 'purple',
-                        symbol: 'circle',
-                        symbolSize: 5
                     },
-                    lineStyle: {
-                        normal: {
-                            color: '#d9a624',
-                            width: 1,
-                            curveness: 0.07
-                        }
-                    },
-                    data: [
-                        {
-                            fromName: 'MSE',
-                            toName: 'ECE',
-                            coords: [
-                                geoCoordMap['MSE'],
-                                geoCoordMap['ECE'],
-                            ],
-                            value: 10
-                        },
-                        {
-                            fromName: 'PAS',
-                            toName: 'ECE',
-                            coords: [
-                                geoCoordMap['PAS'],
-                                geoCoordMap['ECE'],
-                            ],
-                            value: 10
-                        },
-                        {
-                            fromName: 'OSC',
-                            toName: 'ECE',
-                            coords: [
-                                geoCoordMap['OSC'],
-                                geoCoordMap['ECE'],
-                            ],
-                            value: 10
-                        },
-                        {
-                            fromName: 'BIO',
-                            toName: 'ECE',
-                            coords: [
-                                geoCoordMap['BIO'],
-                                geoCoordMap['ECE'],
-                            ],
-                            value: 10
-                        },
-                    ]
                 },
 
 
@@ -460,7 +456,7 @@
                     type: 'lines',
                     coordinateSystem: 'gmap',
                     zlevel: 2,
-                    data: convertEdge(geneInActNode(nodeData, actNode)),
+                    data: convertNodeHubEdge(geneInActNode(nodeData, actNode)),
                     // symbol: ['none', 'none'],
                     symbol: ['none', 'none'],
                     // effect: {
@@ -474,7 +470,7 @@
                     lineStyle: {
                         normal: {
                             color: 'grey',
-                            width: 1,
+                            width: 1.5,
                         }
                     },
 
@@ -489,20 +485,20 @@
                     type: 'lines',
                     coordinateSystem: 'gmap',
                     zlevel: 2,
-                    data: convertEdge(geneActNode(nodeData, actNode), true),
+                    data: convertNodeHubEdge(geneActNode(nodeData, actNode), true),
                     effect: {
                         show: true,
                         period: 6,
                         trailLength: 0.2,
                         color: 'red',
                         symbol: 'circle',
-                        symbolSize: 4
+                        symbolSize: 5
                     },
                     lineStyle: {
                         normal: {
                             color: '#60de6d',
                             // color: 'green',
-                            width: 1,
+                            width: 1.5,
                         }
                     },
 
@@ -515,36 +511,141 @@
                     type: 'lines',
                     coordinateSystem: 'gmap',
                     zlevel: 2,
-                    data: convertEdge(geneActNode(nodeData, actNode)),
+                    data: convertNodeHubEdge(geneActNode(nodeData, actNode)),
                     effect: {
                         show: true,
                         period: 6,
                         trailLength: 0.2,
                         color: 'purple',
                         symbol: 'circle',
-                        symbolSize: 4
+                        symbolSize: 5
                     },
                     lineStyle: {
                         normal: {
-                            color: 'grey',
-                            width: 1,
+                            color: '#60de6d',
+                            width: 1.5,
                         }
                     },
                 },
 
 
+                {
+                    // active EPS links (ECE --> Other)
+                    // 黄绿色 line
+                    // 红色 photon flow
+                    name: 'EPS link',
+                    type: 'lines',
+                    coordinateSystem: 'gmap',
+                    zlevel: 2,
+                    effect: {
+                        show: true,
+                        period: 6,
+                        trailLength: 0.2,
+                        color: 'red',
+                        symbol: 'circle',
+                        symbolSize: 6
+                    },
+                    lineStyle: {
+                        normal: {
+                            color: '#a6c84c',
+                            width: 1.5,
+                            curveness: 0.07
+                        }
+                    },
+                    data: convertHubHubEdge(geneActHub(hubData, actNode), true),
+                },
+                {
+                    // inactive EPS links (ECE --> Other)
+                    // 黄绿色 line
+                    // No photon flow
+                    name: 'EPS link',
+                    type: 'lines',
+                    coordinateSystem: 'gmap',
+                    zlevel: 2,
+                    effect: {
+                        show: true,
+                        period: 6,
+                        trailLength: 0.2,
+                        color: 'red',
+                        symbol: 'none',
+                        symbolSize: 6
+                    },
+                    lineStyle: {
+                        normal: {
+                            color: '#a6c84c',
+                            width: 1.5,
+                            curveness: 0.07
+                        }
+                    },
+                    data: convertHubHubEdge(geneInActHub(hubData, actNode), true),
+
+                },
+
+
+                {
+                    // active SPD links (between hubs) (Other --> ECE)
+                    // 棕色 line
+                    // 紫色 photon flow
+                    name: 'SPD link',
+                    type: 'lines',
+                    coordinateSystem: 'gmap',
+                    zlevel: 2,
+                    effect: {
+                        show: true,
+                        period: 6,
+                        trailLength: 0.2,
+                        color: 'purple',
+                        symbol: 'circle',
+                        symbolSize: 6
+                    },
+                    lineStyle: {
+                        normal: {
+                            color: '#d9a624',
+                            {#corlo:'red',#}
+                            width: 1.5,
+                            curveness: 0.07
+                        }
+                    },
+                    data: convertHubHubEdge(geneActHub(hubData, actNode)),
+                },
+                {
+                    // inactive SPD links (Other --> ECE)
+                    // 棕色 line
+                    // NO photon flow
+                    name: 'SPD link',
+                    type: 'lines',
+                    coordinateSystem: 'gmap',
+                    zlevel: 2,
+                    effect: {
+                        show: true,
+                        period: 6,
+                        trailLength: 0.2,
+                        color: 'purple',
+                        symbol: 'none',
+                        symbolSize: 6
+                    },
+                    lineStyle: {
+                        normal: {
+                            color: '#d9a624',
+                            width: 1.5,
+                            curveness: 0.07
+                        }
+                    },
+                    data: convertHubHubEdge(geneInActHub(hubData, actNode)),
+                },
+
             ]
         };
     };
 
+
     // initialize chart
     var chart = echarts.init(document.getElementById("echarts-google-map"));
-    var interval = 3000;
-
-    {#chart.setOption(option);#}
+    chart.setOption(optionPrevious);
+    // var actNode = ['mse-1', 'ece-1', 'osc-3', 'osc-5', 'pas-1', 'bio-1', 'bio-3'];
+    // chart.setOption(geneOptionsSeries(actNode));
     // get google map instance
-    {#var gmap = chart.getModel().getComponent("gmap").getGoogleMap();#}
-
+    var gmap = chart.getModel().getComponent("gmap").getGoogleMap();
     var styles = [
         {
             "stylers": [
@@ -561,13 +662,21 @@
         },
 
     ];
+    gmap.setOptions(
+        {
+            "styles": styles
+        }
+    );
 </script>
 
 
 <script>
-
-    var chart = echarts.init(document.getElementById("echarts-google-map"));
     var interval = 3000;
+
+    {#var actNode = ['mse-1', 'ece-1', 'osc-3', 'osc-5', 'bio-1', 'bio-3'];#}
+    {#chart.setOption(geneOptionsSeries(actNode));#}
+
+    {#TODO: 每隔 3 秒刷新#}
     $(
         function () {
             fetchData(chart);
@@ -580,42 +689,20 @@
                     url: "{% url 'maps-status'%}",
                     dataType: 'json',
                     success: function (res) {
-                        alert(typeof (res));
-
-                        var options = geneOptions(res['actNode']);
-                        chart.setOption(options);
-                        var gmap = chart.getModel().getComponent("gmap").getGoogleMap();
-                        gmap.setOptions(
-                            {
-                                "styles": styles
-                            }
-                        )
+                        console.log(typeof (res));
+                        var optionsSeries = geneOptionsSeries(res['actNode']);
+                        chart.setOption(optionsSeries);
                     },
                 });
 
             }
         }
     )
-
-
-    {#if (Math.round($('#binwidth').val() / 1e9) != Math.round(interval)) {#}
-    {#    interval = $('#binwidth').val() / 1e9;#}
-    {#alert(String(interval) + ' ms!!!');#}
-    {#clearInterval(timeIt);#}
-    {#timeIt = setInterval(fetchData, interval)#}
-    {# }#}
-    {# }#}
-    {# }#}
-    {#);#}
-
-    {# } #}
-
 </script>
 
 
 </body>
 </html>
-
 
 
 

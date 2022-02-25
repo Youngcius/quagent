@@ -1,0 +1,501 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="cleartype" content="on">
+    <meta http-equiv="x-dns-prefetch-control" content="on">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <title>an example for echarts-extension-gmap</title>
+    <!-- please replace {key} with your own API key -->
+    <script type="text/javascript"
+            src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAi9FIehgt2UmruYMYY-NcYzdzMbzT_P7Y&language=en-US"></script>
+    <!-- echarts CDN -->
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/echarts@5/dist/echarts.min.js"></script>
+    <!-- echarts gmap extension -->
+    <!-- <script type="text/javascript" src="../dist/echarts-extension-gmap.min.js"></script> -->
+    <script type="text/javascript"
+            src="https://cdn.jsdelivr.net/npm/echarts-extension-gmap@1.4.0/dist/echarts-extension-gmap.min.js"></script>
+    <style type="text/css">
+        * {
+            margin: 0;
+            padding: 0;
+        }
+
+        html, body, #echarts-google-map {
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+        }
+    </style>
+</head>
+<body>
+
+<div id="echarts-google-map"></div>
+
+<script>
+    var node_label = {
+        "ece-1": "ECE roof",
+        "ece-2": "ECE 594",
+
+        "mse-1": "MSE-155",
+
+        "pas-1": "PAS 156",
+        "pas-2": "PAS 499",
+
+        "osc-1": "OSC roof",
+        "osc-2": "OSC 219",
+        "osc-3": "OSC 676",
+        "osc-4": "OSC 656",
+        "osc-5": "OSC 676",
+
+        "bio-1": "BIO 8C",
+        "bio-2": "BIO 8D",
+        "bio-3": "BIO O84",
+
+    };
+    var hubSize = 200;
+    var nodeSize = 120;
+    var hubData = [
+        {name: 'ECE', value: Math.round(hubSize * 1.5)},
+        {name: 'OSC', value: hubSize},
+        {name: 'MSE', value: hubSize},
+        {name: 'BIO', value: hubSize},
+        {name: 'PAS', value: hubSize},
+    ]
+    var nodeData = [
+        {name: 'mse-1', value: nodeSize},
+        {name: 'ece-1', value: nodeSize},
+        {name: 'ece-2', value: nodeSize},
+        {name: 'pas-1', value: nodeSize},
+        {name: 'pas-2', value: nodeSize},
+        {name: 'osc-1', value: nodeSize},
+        {name: 'osc-2', value: nodeSize},
+        {name: 'osc-3', value: nodeSize},
+        {name: 'osc-4', value: nodeSize},
+        {name: 'osc-5', value: nodeSize},
+        {name: 'bio-1', value: nodeSize},
+        {name: 'bio-2', value: nodeSize},
+        {name: 'bio-3', value: nodeSize},
+    ];
+    var actNode = ['mse-1', 'ece-1', 'osc-3', 'osc-5', 'pas-1', 'bio-1', 'bio-3'];
+    var nodetoHub = function (node) {
+        return node.split('-')[0].toUpperCase();
+    };
+
+    var ece_loc = [-110.95328470019787, 32.235322902646054];
+    var pas_loc = [-110.95412440804933, 32.229882995924434];
+    var osc_loc = [-110.94724688708811, 32.23146361606346];
+    var mse_loc = [-110.95241440546402, 32.23348311904278];
+    var bio_loc = [-110.94706117187064, 32.23752023248503];
+    var geoCoordMap = {
+        "ECE": ece_loc,
+        'OSC': osc_loc,
+        'MSE': mse_loc,
+        'PAS': pas_loc,
+        'BIO': bio_loc,
+
+        'mse-1': [mse_loc[0] - 0.0003, mse_loc[1] - 0.0005],
+
+        'ece-1': [ece_loc[0] - 0.0006, ece_loc[1] + 0.0006],
+        'ece-2': [ece_loc[0] + 0.0006, ece_loc[1] + 0.0006],
+
+        'pas-1': [pas_loc[0] - 0.0005, pas_loc[1] - 0.0005],
+        'pas-2': [pas_loc[0] + 0.0005, pas_loc[1] - 0.0005],
+
+        'osc-1': [osc_loc[0] + 0.0005, osc_loc[1] + 0.0005],
+        'osc-2': [osc_loc[0] + 0.0008, osc_loc[1] - 0.0003],
+        'osc-3': [osc_loc[0] + 0.0004, osc_loc[1] - 0.0006],
+        'osc-4': [osc_loc[0] - 0.0003, osc_loc[1] - 0.0007],
+        'osc-5': [osc_loc[0] - 0.0007, osc_loc[1] - 0.0004],
+
+        'bio-1': [bio_loc[0] + 0.0008, bio_loc[1] + 0.0003],
+        'bio-2': [bio_loc[0] + 0.0004, bio_loc[1] + 0.0006],
+        'bio-3': [bio_loc[0] - 0.0006, bio_loc[1] + 0.0004],
+    };
+
+
+    var geneActNode = function (data, actIndex) {
+        var res = [];
+        for (item of data) {
+            if (actIndex.includes(item.name)) {
+                res.push(item);
+            }
+        }
+        return res;
+    }
+    var geneInActNode = function (data, actIndex) {
+        var res = [];
+        for (item of data) {
+            if (!actIndex.includes(item.name)) {
+                res.push(item);
+            }
+        }
+        return res;
+    }
+
+    var convertVertex = function (data) {
+        var res = [];
+        for (item of data) {
+            res.push({
+                name: item.name,
+                value: geoCoordMap[item.name].concat(item.value)
+            });
+        }
+        return res;
+    };
+
+
+    var convertEdge = function (data, reverse = false) {
+        // e.g. ece-1 ---> ECE
+        var res = [];
+        if (reverse) {
+            // hub to node
+            for (item of data) {
+                node = item.name;
+                hub = nodetoHub(node);
+                res.push({
+                    fromName: hub,
+                    toName: node,
+                    coords: [geoCoordMap[hub], geoCoordMap[node]],
+                    value: 10
+                })
+            }
+        } else {
+            // node to hub: default
+            for (item of data) {
+                node = item.name;
+                hub = nodetoHub(node);
+                res.push({
+                    fromName: node,
+                    toName: hub,
+                    coords: [geoCoordMap[node], geoCoordMap[hub]],
+                    value: 10
+                })
+            }
+        }
+
+        return res;
+    };
+
+
+    var option = {
+        // google map component
+        gmap: {
+            // initial options of Google Map
+            // See https://developers.google.com/maps/documentation/javascript/reference/map#MapOptions for details
+            // initial map center, accepts an array like [lng, lat] or an object like { lng, lat }
+            // center: [108.39, 39.9],
+            center: [-110.95068982618264, 32.23383119775424], // student union location
+
+            // initial map zoom
+            zoom: 16.5,
+
+            // whether echarts layer should be rendered when the map is moving. `true` by default.
+            // if false, it will only be re-rendered after the map `moveend`.
+            // It's better to set this option to false if data is large.
+            renderOnMoving: true,
+            // the zIndex of echarts layer for Google Map. `2000` by default.
+            echartsLayerZIndex: 2021,
+            // whether to enable gesture handling. `true` by default.
+            // since v1.4.0
+            roam: true
+
+            // More initial options...
+        },
+        tooltip: {
+            trigger: 'item',
+            formatter: '{a}<br /> <strong>{b}</strong>'
+        },
+        animation: true,
+        series: [
+            {
+                // 黑色 闪烁
+                name: 'Routing hub',
+                type: 'effectScatter',
+                coordinateSystem: 'gmap',
+                zlevel: 3,
+                data: convertVertex(hubData),
+                symbolSize: function (val) {
+                    return val[2] / 10;
+                },
+                encode: {
+                    value: 2,
+                    lng: 0,
+                    lat: 1
+                },
+                showEffectOn: 'render',
+                rippleEffect: {
+                    brushType: 'stroke'
+                },
+                label: {
+                    formatter: '{b}',
+                    position: 'right',
+                    show: true,
+                    // color: 'red'
+                    // fontSize: 15
+                },
+                itemStyle: {
+                    color: 'black',
+                    shadowBlur: 10,
+                    shadowColor: '#333'
+                },
+
+            },
+
+
+            {
+                //inactive node (all nodes)
+                // 浅蓝色
+                name: 'User node',
+                type: 'scatter',
+                coordinateSystem: 'gmap',
+                zlevel: 3,
+                data: convertVertex(nodeData),
+                symbolSize: function (val) {
+                    return val[2] / 10;
+                },
+                encode: {
+                    value: 2,
+                    lng: 0,
+                    lat: 1
+                },
+                label: {
+                    formatter: '{b}',
+                    position: 'right',
+                    show: false
+                },
+                itemStyle: {
+                    // color: '#128ac1'
+                    color: '#323232',
+
+                },
+            },
+
+
+            {
+                // active EPS links (between hubs) (all active)
+                // 黄绿色 line
+                // 红色 photon flow
+                name: 'EPS link',
+                type: 'lines',
+                coordinateSystem: 'gmap',
+                zlevel: 2,
+                effect: {
+                    show: true,
+                    period: 6,
+                    trailLength: 0.2,
+                    color: 'red',
+                    symbol: 'none',
+                    symbolSize: 5
+                },
+                lineStyle: {
+                    normal: {
+                        color: '#a6c84c',
+                        width: 1.5,
+                        curveness: 0.07
+                    }
+                },
+                data: [
+                    {
+                        fromName: 'ECE',
+                        toName: 'MSE',
+                        coords: [
+                            geoCoordMap['ECE'],
+                            geoCoordMap['MSE']
+                        ],
+                        value: 10
+                    },
+                    {
+                        fromName: 'ECE',
+                        toName: 'PAS',
+                        coords: [
+                            geoCoordMap['ECE'],
+                            geoCoordMap['PAS']
+                        ],
+                        value: 10
+                    },
+                    {
+                        fromName: 'ECE',
+                        toName: 'OSC',
+                        coords: [
+                            geoCoordMap['ECE'],
+                            geoCoordMap['OSC']
+                        ]
+                    },
+                    {
+                        fromName: 'ECE',
+                        toName: 'BIO',
+                        coords: [
+                            geoCoordMap['ECE'],
+                            geoCoordMap['BIO']
+                        ]
+                    }
+                ]
+            },
+
+
+            {
+                // active SPD links (between hubs) (all active)
+                // 棕色 line
+                // 紫色 photon flow
+                name: 'SPD link',
+                type: 'lines',
+                coordinateSystem: 'gmap',
+                zlevel: 2,
+                effect: {
+                    show: true,
+                    period: 6,
+                    trailLength: 0.2,
+                    color: 'purple',
+                    symbol: 'none',
+                    symbolSize: 5
+                },
+                lineStyle: {
+                    normal: {
+                        color: '#d9a624',
+                        width: 1.5,
+                        curveness: 0.07
+                    }
+                },
+                data: [
+                    {
+                        fromName: 'MSE',
+                        toName: 'ECE',
+                        coords: [
+                            geoCoordMap['MSE'],
+                            geoCoordMap['ECE'],
+                        ],
+                        value: 10
+                    },
+                    {
+                        fromName: 'PAS',
+                        toName: 'ECE',
+                        coords: [
+                            geoCoordMap['PAS'],
+                            geoCoordMap['ECE'],
+                        ],
+                        value: 10
+                    },
+                    {
+                        fromName: 'OSC',
+                        toName: 'ECE',
+                        coords: [
+                            geoCoordMap['OSC'],
+                            geoCoordMap['ECE'],
+                        ],
+                        value: 10
+                    },
+                    {
+                        fromName: 'BIO',
+                        toName: 'ECE',
+                        coords: [
+                            geoCoordMap['BIO'],
+                            geoCoordMap['ECE'],
+                        ],
+                        value: 10
+                    },
+                ]
+            },
+
+
+            {
+                // inactive hub <---> node links
+                // 灰色 line
+                name: 'hub-node link',
+                type: 'lines',
+                coordinateSystem: 'gmap',
+                zlevel: 2,
+                data: convertEdge(geneInActNode(nodeData, actNode)),
+                // symbol: ['none', 'none'],
+                symbol: ['none', 'none'],
+                // effect: {
+                //     show: true,
+                //     period: 6,
+                //     trailLength: 0.2,
+                //     color: 'purple',
+                //     symbol: 'circle',
+                //     symbolSize: 0
+                // },
+                lineStyle: {
+                    normal: {
+                        color: 'grey',
+                        width: 1,
+                    }
+                },
+
+
+            },
+
+
+            {
+                // active hub-node links
+                // 绿色 line
+                // 红色 photon flow
+                name: 'hub-node link',
+                type: 'lines',
+                coordinateSystem: 'gmap',
+                zlevel: 2,
+                data: convertEdge(nodeData),
+                effect: {
+                    show: true,
+                    period: 6,
+                    trailLength: 0.2,
+                    color: 'red',
+                    symbol: 'none',
+                    symbolSize: 4
+                },
+                lineStyle: {
+                    normal: {
+                        color: 'grey',
+                        // color: 'green',
+                        width: 1.5,
+                    }
+                },
+
+            },
+
+
+        ]
+    };
+
+    // initialize chart
+    var chart = echarts.init(document.getElementById("echarts-google-map"));
+    chart.setOption(option);
+    // get google map instance
+    var gmap = chart.getModel().getComponent("gmap").getGoogleMap();
+
+
+    var styles = [
+        {
+            "stylers": [
+                {"visibility": "simplified"},
+                // {"saturation": -100}
+            ]
+        },
+        {
+            "featureType": "poi",
+            "stylers": [
+                {"visibility": "off"},
+                {"lightness": 25}
+            ]
+        },
+
+    ];
+
+    gmap.setOptions(
+        {
+            "styles": styles
+        }
+    )
+
+
+</script>
+
+
+</body>
+</html>
+
+
+
+

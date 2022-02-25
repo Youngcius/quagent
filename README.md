@@ -30,6 +30,9 @@ We have been trying to enrich and improve Quagent's architecture. The figure bel
 3. Soft-Hardware interface:
 4. Hardware Platform: 3 Entangled-Photon Sources, 8 Single-Photon Detector Channels
 
+
+More details could be found in the [Design Document](./static/doc/design-doc.md) for reference of developers.
+
 ## Usage
 
 ### Usage via Agilent iLab operation software in UA
@@ -39,6 +42,8 @@ technical prototype but not a released business software. And the independent pr
 develop and test continuously. In the stable application scenarios of U Arizona, Quagent is integrated with iLab
 operation software supported by Agilent Inc. Thus if you are a supported user of the iLab system of U Arizona, you can
 begin to use it conveniently via iLab.
+
+
 
 ### Download and install via GitHub
 

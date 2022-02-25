@@ -19,6 +19,8 @@ import copy
 
 from ..utils import *
 
+
+
 CurrentConfig.GLOBAL_ENV = Environment(loader=FileSystemLoader("./template/pyecharts"))
 
 counter_config = {
@@ -39,7 +41,8 @@ def counter_page(request):
     # for ch in range(1, n_channels + 1):
     #     tagger.setTestSignal(ch, True)
 
-    return render(request, 'measurement/counter.html', {'channels': list(range(1, n_channels + 1))})
+    # return render(request, 'measurement/counter.html', {'channels': list(range(1, n_channels + 1))})
+    return render(request, 'measurement/counter.html', {'channels': [1,3,5]})
 
 
 

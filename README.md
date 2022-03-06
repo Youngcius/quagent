@@ -31,7 +31,7 @@ We have been trying to enrich and improve Quagent's architecture. The figure bel
 4. Hardware Platform: 3 Entangled-Photon Sources, 8 Single-Photon Detector Channels
 
 
-More details could be found in the [Design Document](./static/doc/design-doc.md) for reference of developers.
+More details could be found in the [Design Document](doc/design-doc.md) for reference of developers.
 
 ## Usage
 

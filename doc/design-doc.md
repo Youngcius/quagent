@@ -1,0 +1,175 @@
+# Systematic Design of Quagent
+
+## Hardware Layout
+
+### Current hardware resources
+
+- high-quality EPs (5 kinds of telecom entangled photons)
+
+- 5×16 & 8×8 fiber switches (for routing control)
+
+- 1 SNSPD (8 channels)
+
+- 1 Time Tagger (ultimate counting device with 8 channels)
+
+### Channel Linkage with Fiber Switches
+
+As for the connection capability of our platform, obviously it can support maximum 16 user nodes (16 lab platforms),
+each with 5 EPs channels & 4 SNSPD channels linked to fiber switches.
+
+![switch-linkage](../static/images/switch-linkage.png)
+
+## Font-end & Back-end Technologies
+
+Unlike a classic Web or Web-based software, dominant points of our system lie in the back-end logic and other supporting
+technologies like data visualization.
+
+### Choices & Reasons
+
+- Django: A popular back-end business framework based on Python
+- Echarts: A powerful, interactive charting and visualization library for browser, base on JavaScript
+- MySQL: Most popular open-source relational database management system
+- Axios: Asynchronous request tool library of AJAX
+- Semantic UI: A development framework that helps create beautiful, responsive layouts using human-friendly HTML
+
+Django is a high-level Python web framework that encourages rapid development and clean, pragmatic design. We use Django
+framework to support functionalities of HTTP requirements and responses, database operation and real-time monitoring. In
+our software, users are provided by a series of friendly interfaces including configuring user-specific parameters of
+connected devices as well as real-time data acquisition. Particularly, data acquired by the counting device could be not
+only easily shown on the Web dashboard, but real-timely downloaded to users, in form of JSON files.
+
+Apache ECharts is a free, powerful charting and visualization library offering an easy way of adding intuitive,
+interactive, and highly customizable charts to serial commercial products. It is natively written by JavaScript, while
+it also provides easy-to-use interfaces for Python. The latter is what we mainly used in Quagent, since in this way data
+visualization programs can be natively embedded in back-end business logic codes.Specifically, In the `monitor` module,
+JavaScript-based ECharts library is used to implement geographical information visualization, integrated with Google
+Maps APIs. In the `acquire` module, the series of measurement results are shown via Python-based PyECharts, in forms of
+Histogram, Count Rate and other types of figures. This is taken into account to for more convenient when writing
+back-end processing logics.
+
+MySQL is the most popular relational database management system at present. It is widely used in small and medium-sized
+websites on the Internet. It has the advantages of small volume, fast speed and low overall cost of ownership. This
+project involves multiple data tables. MySQL is a good choice. In fact, only on the final distribution stage we will use
+MySQL. While in the development and testing stage, we just use the built-in database SQLite of Django, just for
+convenience.
+
+Asynchronous requesting and local refreshing are absolutely necessary for Web programs in real scenarios. AJAX (
+Asynchronous JavaScript and XML) is a standard and web development technique to realize this. While Axios is a
+JavaScript library that helps developers use Ajax easier, or, it is a "promise"-based encapsulation of AJAX. In our
+project, functions of Axios library are used in HTML pages to acquire data forms updated by users, which are then sent
+ot back-end views functions.
+
+Semantic UI a full semantic-designed front-end framework. Due to its ease of use, flexibility and abundant documents and
+examples support, it is chosen to beauty the font-end profile.
+
+## Software Architecture
+
+This software consists of four modules:
+
+- `acquire`: data acquisition functionalities
+- `hubinfo`: information query and parameter configuration, as the first step for users' operation
+- `monitor`: part of back-end management system
+
+### Functionalities of modules
+
+#### 1. `acquire` module
+
+The structure of `acquire` module is as follows. Two points are particularly taken into consideration to implement this
+module: 1) *global variable* presenting the unique but shared hardware resources, e.g., Time Tagger; 2) abstract
+*user-specific measurement instances* providing non-conflicting measurement settings and data acquisition channels.
+
+For the first point, a source file `globvar.py` is maintained in this module, whose inner initialized variables are
+called by other views functions.
+
+```text
+acquire
+├── __init__.py: in this script, global variable "tagger" gets initialized by Swabian TimeTagger API
+├── measurement
+│   ├── strategy.md
+│   ├── views_correlation.py
+│   ├── views_countbetweenmarkers.py
+│   ├── views_counter.py
+│   ├── views_histogram.py
+│   ├── views_startstop.py
+│   └── views_timedifferences.py
+├── admin.py: built-in ..., automatically generated by Django
+├── apps.py: built-in ..., automatically generated by Django
+├── gene_eps_spd.py: TODO: delete this
+├── globvar.py: global variables, like "tagger" and serial dynamic dictionary data consisting of user-specific measurement cases 
+├── models.py: , automatically generated by Django
+├── urls.py: routing function
+├── utils.py: a set of directed utility functions for this module
+└── views.py: view functions, as processing implementation of routing functions from urls.py
+```
+
+For the second point, it is realized based on related data structure and global dynamic variables. We define
+the `UserDetector` class to present one specific user-measurement pair.
+
+```python
+class UserDetector:
+    """
+    Pair of one User and one Measurement instance
+    """
+    detector_types = ['Counter', 'CounterBetweenMarkers', 'StartStop',
+                      'Correlation', 'TimeDifferences', 'Histogram']
+
+    def __init__(self, username: str, mode: str):
+        """
+        Initialize object, set its username and measurement mode
+        """
+        self.username = username
+        if mode not in self.detector_types:
+            raise ValueError('{} is not a supported measurement mode'.format(mode))
+        else:
+            self.mode = mode
+        self.detector, self.config = None, None
+
+    def create_detector(self, tagger: tt.TimeTagger):
+        """
+        :param tagger: Time Tagger instance
+        """
+        self.detector = getattr(tt, self.mode)(tagger, **self.config)
+
+    def set_measure_config(self, **kwargs):
+        """
+        Set configuration parameters for some specific measurement mode
+        """
+        self.config = kwargs
+```
+
+To maintain dynamic updating of user-specific measurement cases, six global variables corresponding to six measurement
+modes, named `usr_<detector mode>_map` (dict data type in Python) are pre-defined in `globvar.py` file.
+
+```python
+user_counter = {
+    'u01': user_counter,  # UserDetectorinstance
+    'u02': ...,
+    ...
+}
+user_correlation = {
+    'u01': user_correlation,  # UserDetector instance
+    'u02': ...,
+    ...
+}
+```
+
+#### 2. `hubinfo` module
+
+#### 3. `monitor` module
+
+### Design mode
+
+- Single-case mode: we use `globvar.py` to store the dominant abstracted variables ...
+-
+
+## Scheduling Strategy of Quagent
+
+![quagent-shceduling](../static/images/strategy-with-ilab.png)
+
+
+
+
+
+
+
+### 咋和 iLab API 连接呢。。。。。。。。。。 TODO

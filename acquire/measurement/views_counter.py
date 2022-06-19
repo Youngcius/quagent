@@ -22,9 +22,6 @@ from acquire import tagger, usr_cnt_map
 
 print('counter 模块载入')
 
-# JsonResponse = json_response
-# JsonError = json_error
-
 CurrentConfig.GLOBAL_ENV = Environment(loader=FileSystemLoader("./template/pyecharts"))
 
 
@@ -43,9 +40,6 @@ def counter_page(request):
             tagger = tt.createTimeTagger()
         except RuntimeError:
             return HttpResponseServerError('Sorry, The Time Tagger on server is not available now!')
-
-        # for ch in range(1, n_channels + 1):  # simulation signals TODO 改动nchannels
-        #     tagger.setTestSignal(ch, True)
     else:
         print('已经存在 tagger instance')
 
@@ -73,8 +67,7 @@ def update_config(request):
     # AJAX POST
     binwidth = int(request.POST.get('binwidth'))
     n_values = int(request.POST.get('n_values'))
-    # channels = list(map(int, request.GET.getlist('channels[]')))  # note that there must be a [] in the parameter name
-    channels = list(map(int, request.POST.getlist('channels[]')))
+    channels = list(map(int, request.POST.getlist('channels[]')))  # note that there must be a [] in the parameter name
     username = request.user.username
 
     # create user-specific Counter instance
@@ -86,49 +79,10 @@ def update_config(request):
     })
     user_counter.create_detector(tagger)
     usr_cnt_map[username] = user_counter
-    # ==================
-    # user_counter_conf = Counter.objects.filter(user=username)
-    # TODO: in shell verify the type? None?
-    # if user_counter_conf:
-    # 非空时候，更新 user-specific counter_config
-    # user_counter_conf.binwidth = binwidth
-    # user_counter_conf.n_values = n_values
-    # user_counter_conf.channels = list_to_string(channels)
-    # user_counter_conf.save()
-    # else:
-    # 创建
-    # user_counter_conf = Counter(
-    #     binwidth=binwidth,
-    #     n_values=n_values,
-    #     channels=list_to_string(channels)
-    # )
-    # user_counter_conf.save()
-
-    # counter_config['binwidth'] = binwidth
-    # counter_config['n_values'] = n_values
-    # counter_config['channels'] = channels
-
-    # print(counter_config)
-    # 创建 Counter & auto-start
-    # global counter
-    # global lister
-    # lister = Lister(counter_config['n_values'])
-    # if counter is None:
-    # counter_list = [
-    #     tt.Counter(tagger, counter_config['channels'], binwidth=counter_config['binwidth'],
-    #                n_values=counter_config['n_values'])
-    #     for i in range(n_channels)
-    # ]
-    # for i in range()
-    # counter = tt.Counter(tagger, counter_config['channels'], binwidth=counter_config['binwidth'],
-    #                      n_values=counter_config['n_values'])
     return HttpResponse('update successfully')
 
 
 # TODO: 页面关闭时候 delete user_cnt_map[<username>]
-
-# ====================================================================
-# 以下为真实的TimeTagger测试
 
 
 def start(request):

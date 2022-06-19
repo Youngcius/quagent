@@ -156,7 +156,3 @@ def startstop_chart_view(request):
         request.POST.get('unit_name')
     )))
 
-#
-#
-# def startstop_chart_update_view(request):
-#     return JsonResponse({'name': 10, 'value': randrange(0, 5)})

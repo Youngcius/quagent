@@ -5,6 +5,7 @@ Notice (edited on 06/07/2022):
     COM3: 8x8 switches
     COM5: 8x8 switches
 """
+import json
 import serial
 from typing import List, Optional
 from utils import host
@@ -127,7 +128,8 @@ class SPDSwitcher(Switcher):
 
     def __init__(self):
         super(SPDSwitcher, self).__init__()
-        self.port = 'COM3'  # modified on 06/07/2022
+        with open('config.json', 'r') as f:
+            self.port = json.load(f)['SPD_PORT']
         self.n_in = 8
         self.n_out = 8
         self.out_ports = ['1', '2', '3', '4', '5', '6', '7', '8']
@@ -141,7 +143,8 @@ class EPSwitcher(Switcher):
 
     def __init__(self):
         super(EPSwitcher, self).__init__()
-        self.port = 'COM5'  # modified on 06/07/2022
+        with open('config.json', 'r') as f:
+            self.port = json.load(f)['EPS_PORT']
         self.n_in = 5
         self.n_out = 16
         self.out_ports = ['01', '02', '03', '04', '05', '06', '07', '08',

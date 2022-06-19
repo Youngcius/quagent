@@ -1,0 +1,77 @@
+[
+    {
+        "id": 995172,
+        "name": "Zhang, Zheshen (UA) Lab",
+        "principal_investigators": [
+            {
+                "id": 995170,
+                "name": "Zheshen Zhang",
+                "first_name": "Zheshen",
+                "last_name": "Zhang",
+                "email": "zsz@email.arizona.edu",
+                "phone": null,
+                "employee_id": "zsz"
+            }
+        ]
+    },
+    {
+        "id": 118219,
+        "name": "iLab Test (Testing) Lab",
+        "principal_investigators": [
+            {
+                "id": 669445,
+                "name": "Julie Cafferata",
+                "first_name": "Julie",
+                "last_name": "Cafferata",
+                "email": "julie.cafferata@agilent.com",
+                "phone": "555-555-5555",
+                "employee_id": ""
+            },
+            {
+                "id": 278903,
+                "name": "Alex Researcher",
+                "first_name": "Alex",
+                "last_name": "Researcher",
+                "email": "testuser+AR@ilabsolutions.com",
+                "phone": "999999999",
+                "employee_id": "N/A"
+            },
+            {
+                "id": 342063,
+                "name": "Audrey Bahrani",
+                "first_name": "Audrey",
+                "last_name": "Bahrani",
+                "email": "audrey.bahrani@agilent.com",
+                "phone": "444-444-4444",
+                "employee_id": "N/A"
+            },
+            {
+                "id": 117496,
+                "name": "Fake External",
+                "first_name": "Fake",
+                "last_name": "External",
+                "email": "sgiftai@hotmail.com",
+                "phone": "",
+                "employee_id": "N/A"
+            },
+            {
+                "id": 766660,
+                "name": "Kai Nakamura",
+                "first_name": "Kai",
+                "last_name": "Nakamura",
+                "email": "nakamura.kai@outlook.com",
+                "phone": "4164711616",
+                "employee_id": "N/A"
+            },
+            {
+                "id": 288714,
+                "name": "Uf Customer",
+                "first_name": "Uf",
+                "last_name": "Customer",
+                "email": "ufcommercialcustomer@ilabtest.com",
+                "phone": "352-123-4567",
+                "employee_id": "N/A"
+            }
+        ]
+    }
+]

@@ -6,7 +6,8 @@
         <div class="ui inverted vertical masthead center aligned segment">
 
             <div class="ui text container">
-                <h1 class="ui header">User Hub for <strong>{{ user.username }}</strong></h1>
+                <h1 class="ui header">User Hub for <strong>{{ username }}</strong>, from <strong>{{ labname }}</strong>
+                </h1>
 
             </div>
         </div>
@@ -38,6 +39,8 @@
                 <th>Remark</th>
                 <th>Status</th>
                 <th>Operation</th>
+                <th>Period to apply</th>
+                <th>Time remaining (minute)</th>
             </tr>
             </thead>
             <tbody>
@@ -51,23 +54,44 @@
                         {#operation#}
                         <td>
                             <button class="ui small disabled button">Apply</button>
-                            <button class="ui small button">Release</button>
+                            <button class="ui small button" id="release-ep-{{ ep.idx }}"
+                                    value="release-ep-{{ ep.idx }}">Release
+                            </button>
                         </td>
                     {% else %}
                         <td class="negative"><i class="icon close"></i>Unavailable</td>
                         <td>
-                            <button class="ui small button">Apply</button>
+                            <button class="ui small button" id="apply-ep-{{ ep.idx }}" value="apply-ep-{{ ep.idx }}">
+                                Apply
+                            </button>
                             <button class="ui small disabled button">Release</button>
                         </td>
 
                     {% endif %}
+                    <td>
+                        <input type="datetime-local" id="ep-start-time-{{ ep.idx }}"> — <input type="datetime-local"
+                                                                                               id="ep-end-time-{{ ep.idx }}">
+                        {#                    min="2017-06-01T08:30"#}
+                    </td>
+                    {#                    <td><input type="number" min="10" max="120" step="10" value="10" id="ep-period-{{ ep.idx }}"></td>#}
+                    {#                    {% if ep.avail %}#}
+                    <td><input type="text" value="" id="ep-remain-{{ ep.idx }}" readonly></td>
+                    {#                    {% else %}#}
+                    {#                        <td><input type="text" readonly></td>#}
+                    {#                    {% endif %}#}
                 </tr>
             {% endfor %}
             </tbody>
             <tfoot class="full-width">
             <tr>
-                <th colspan="4">
-                    <button class="ui right floated secondary button">Release All</button>
+                <th colspan="6">
+                    <button class="ui right floated secondary button" id="release-ep-all" value="release-ep-all">
+                        Release All
+                    </button>
+                    {#                    TODO: delete this#}
+                    {#                    <button class="ui right floated secondary button" id="sm" value="send-mail">#}
+                    {#                        Send Mail#}
+                    {#                    </button>#}
                 </th>
             </tr>
             </tfoot>
@@ -88,6 +112,8 @@
                 <th>Status</th>
                 {#            <th>Remark</th>#}
                 <th>Operation</th>
+                <th>Period to apply</th>
+                <th>Time remaining (minute)</th>
             </tr>
             </thead>
             <tbody>
@@ -101,27 +127,254 @@
                         {#operation#}
                         <td>
                             <button class="ui small disabled button">Apply</button>
-                            <button class="ui small button">Release</button>
+                            <button class="ui small button" id="release-spd-{{ spd.idx }}"
+                                    value="release-spd-{{ spd.idx }}">Release
+                            </button>
                         </td>
                     {% else %}
                         <td class="negative"><i class="icon close"></i>Unavailable</td>
                         <td>
-                            <button class="ui small button">Apply</button>
+                            <button class="ui small button" id="apply-spd-{{ spd.idx }}"
+                                    value="apply-spd-{{ spd.idx }}">Apply
+                            </button>
                             <button class="ui small disabled button">Release</button>
                         </td>
 
                     {% endif %}
+                    {#                    <td><input type="number" min="10" max="120" step="10" value="10" id="spd-period-{{ spd.idx }}"></td>#}
+                    <td>
+                        <input type="datetime-local" id="spd-start-time-{{ spd.idx }}"> — <input type="datetime-local"
+                                                                                                 id="spd-end-time-{{ spd.idx }}">
+                        {#                    min="2017-06-01T08:30"#}
+                    </td>
+                    {#                    {% if spd.avail %}#}
+                    <td><input type="text" id="spd-remain-{{ spd.idx }}" value="" readonly></td>
+                    {#                    {% else %}#}
+                    {#                        <td><input type="text" readonly></td>#}
+                    {#                    {% endif %}#}
                 </tr>
             {% endfor %}
             </tbody>
             <tfoot class="full-width">
             <tr>
-                <th colspan="4">
-                    <button class="ui right floated secondary button">Release All</button>
+                <th colspan="6">
+                    <button class="ui right floated secondary button" id="release-spd-all" value="release-spd-all">
+                        Release All
+                    </button>
                 </th>
             </tr>
             </tfoot>
         </table>
     </div>
 
+
+    <script>
+        {#$('#sm').click(function () {#}
+        {#    $.ajax({#}
+        {#        url: "{% url 'sendmail' %}",#}
+        {#        type: 'GET',#}
+        {#        success: function (response){#}
+        {#            console.log(typeof response);#}
+        {#        }#}
+        {#    })#}
+        {# } );#}
+
+        {#原来的申请和释放资源（即刻，无预定时间）#}
+        {#$('button').click(function () {#}
+        {#    var val = $(this).val();#}
+        {#    if (typeof val === 'string') {#}
+        {#        var command = val.split('-'); // parse value into http GET data#}
+        {#        if (command.length === 3 && (command[0] === 'release' || command[0] === 'apply')) {#}
+        {#            if (command[0] === 'apply') {#}
+        {#                $.ajax({#}
+        {#                    url: "{% url 'apply' %}" + '?resource=' + command[1] + '&ch=' + command[2],#}
+        {#                    type: 'GET',#}
+        {#                    success: function (response) {#}
+        {#                        console.log(response, typeof response);#}
+        {#                        location.reload(true);#}
+        {#                        alert('You have occupied channel "' + command[2] + '" from now on');#}
+        {##}
+        {#                    }#}
+        {#                });#}
+        {#            } else {#}
+        {#                $.ajax({#}
+        {#                    url: "{% url 'release' %}" + '?resource=' + command[1] + '&ch=' + command[2],#}
+        {#                    type: 'GET',#}
+        {#                    success: function (response) {#}
+        {#                        console.log(response, typeof response);#}
+        {#                        location.reload(true);#}
+        {#                        alert('You have released channel "' + command[2] + '" successfully');#}
+        {#                    }#}
+        {#                });#}
+        {#            }#}
+        {##}
+        {#        }#}
+        {##}
+        {#    }#}
+        {# });#}
+        var clock = setInterval(updateRemainTime, 2000); // unit: ms
+
+        function updateRemainTime() {
+            {% for ep in eps %}
+                {% if ep.avail %}
+                    // console.log('EP etime:', '{{ ep.etime }}');
+                    var endTime = new Date('{{ ep.etime }}');
+                    var now = new Date();
+                    // console.log(endTime, now);
+                    if (endTime > now) {
+                        $('#ep-remain-' +{{ ep.idx }}).val(Math.round((endTime - now) / 60 / 1000)); // ms --> minute
+                    }
+                {% endif %}
+            {% endfor %}
+
+            {% for spd in spds %}
+                {% if spd.avail %}
+                    // console.log('SPD etime:', '{{ spd.etime }}');
+                    var endTime = new Date('{{ spd.etime }}');
+                    var now = new Date();
+                    // console.log(endTime, now);
+                    if (endTime > now) {
+                        $('#spd-remain-' +{{ spd.idx }}).val(Math.round((endTime - now) / 60 / 1000));
+                    }
+                {% endif %}
+            {% endfor %}
+
+        }
+
+        {##}
+        {#var second;//时 分 秒#}
+        {#second = 0;//初始化#}
+        {##}
+        {#var clock;//计时器#}
+        {#function resetTimer()//重置#}
+        {#{#}
+        {#    clearInterval(clock);#}
+        {#    second = 0;#}
+        {#    document.getElementById('timeValue').value = second + '秒';#}
+        {# }#}
+        {##}
+        {#function startTimer()//开始#}
+        {#{#}
+        {#    clock = setInterval(timer, 10000);// unit: ms#}
+        {# }#}
+
+        {#function stopTimer() {#}
+        {#    //停止计时#}
+        {#    clearInterval(clock);#}
+        {#    document.getElementById('timeValue').value = second + '秒';#}
+        {# }#}
+
+        //计时函数
+        {#function timer() {#}
+        {#    second++;#}
+        {#    for (const argument of arguments) {#}
+        {#        #}
+        {#    }#}
+        {#    $('#ep-period')#}
+        {#    document.getElementById('timeValue').value = second + '秒';#}
+        {# }#}
+
+
+        $('button').click(function () {
+            var val = $(this).val();
+            if (typeof val === 'string') { // e.g. apply-ep-1
+                var command = val.split('-'); // parse value into http GET data
+                if (command.length === 3 && (command[0] === 'release' || command[0] === 'apply')) {
+                    var resource = command[1];
+                    if (command[0] === 'apply') {
+                        {#var period = $('#' + command[1] + '-period-' + command[2]).val();#}
+                        var ch = command[2];
+                        {#alert(period);#}
+                        var start_time = $('#' + resource + '-start-time-' + ch).val(); // e.g. 2022-05-29T02:34
+                        var end_time = $('#' + resource + '-end-time-' + ch).val();
+                        var stime = new Date(start_time);
+                        var etime = new Date(end_time);
+                        var now = new Date();
+                        var now_plus_7 = new Date();
+                        now_plus_7.setDate(now_plus_7.getDate() + 7);
+                        // if ((etime - stime) / 60 / 1000 > 120 || (etime - stime) / 60 / 1000 < 10) {
+                        if ((etime - stime) / 60 / 1000 > 120 || (etime - stime) / 60 / 1000 < 0) {
+                            alert('Fail: Reservation period should be less than 120 minutes and no less than 10 minutes!')
+                        } else if (stime < now || etime > now_plus_7) {
+                            alert('Fail: Reservation period should be within 7 days from now!');
+                        } else {
+                            $.ajax({
+                                {#url: "{% url 'apply' %}" + '?resource=' + resource + '&ch=' + ch + '&start-time=' + start_time + '&end-time=' + end_time,#}
+                                {#type: 'GET',#}
+                                url: "{% url 'apply' %}",
+                                type: 'POST',
+                                dataType: 'html',
+                                data: {
+                                    'resource': resource,
+                                    'ch': ch,
+                                    'start-time': start_time,
+                                    'end-time': end_time,
+                                },
+                                success: function (response) {
+                                    console.log(response, typeof response);
+                                    if (response === 'apply success') {
+                                        alert('Success: You have occupied channel "' + ch + '" from now on');
+                                        // location.reload(true);
+                                    } else {
+                                        alert('Fail: the time period you applied has been reserved by others for this channel!')
+                                    }
+                                }
+                            });
+                        }
+
+                    } else {
+                        $.ajax({
+                            url: "{% url 'release' %}",
+                            type: 'POST',
+                            dataType: 'html',
+                            data: {
+                                'resource': resource,
+                                'ch': command[2],
+                            },
+                            success: function (response) {
+                                console.log(response, typeof response);
+                                location.reload(true);
+                                alert('You have released channel "' + command[2] + '" successfully');
+                            }
+                        });
+                    }
+
+                }
+
+            }
+        });
+
+
+    </script>
+
+
+    {##}
+    {#    <script>#}
+    {#            $('#update').click(function () {#}
+    {#取出数据#}
+    {#            var binwidth = $('#binwidth').val();#}
+    {#            var n_values = $('#n_values').val();#}
+    {#            var channels = [];#}
+    {##}
+    {#            $("input[name='channels']:checked").each(function (i) {//把所有被选中的复选框的值存入数组#}
+    {#                channels[i] = $(this).val();#}
+    {#            });#}
+    {#发送请求#}
+    {#            let formdata = {binwidth: binwidth, n_values: n_values, channels: channels};#}
+    {##}
+    {#            $.ajax({#}
+    {#                url: "{% url 'counter-update-config' %}",#}
+    {#                type: 'GET',#}
+    {#                data: formdata,#}
+    {#                success: function (response) {#}
+    {#                    console.log(response, typeof response)#}
+    {#                }#}
+    {#            })#}
+    {##}
+    {##}
+    {#        })    #}
+    {#    </script>#}
+
+
 {% endblock %}
+

@@ -1,89 +1,82 @@
-from django.shortcuts import render, HttpResponse
+from django.http import JsonResponse
+from django.shortcuts import render
+from django.views import View
+from django.contrib.auth.models import User, Group
+from django.core.mail import send_mail
+from django.views.decorators.csrf import csrf_exempt
 
+from quagent import settings
 
-# Create your views here.
+from hubinfo.models import Laboratory
 
 
 def home(request):
     """
-    主界面
+    Home page
     """
     if request.user.is_authenticated:
-        print('用户已经授权')
+        print('authenticated!')
         print(request.user)
     else:
-        print('未授权')
+        print('unauthenticated!')
         print(request.user)
     return render(request, 'home.html')
-    # return HttpResponse('Hello, this is QUAGENT!')
 
 
-from django.shortcuts import render
+class RegisterView(View):
+    """
+    Register class view
+    """
 
-# Create your views here.
+    def get(self, request):
+        lab_names = list(Laboratory.objects.values_list('lab_name', flat=True))
+        return render(request, "registration/register.html", {'labs': lab_names})
 
-import json
-from random import randrange
-
-from django.http import HttpResponse
-# from rest_framework.views import APIView
-
-from pyecharts.charts import Bar, Pie
-from pyecharts.faker import Faker
-from pyecharts import options as opts
+    def post(self, request):
+        return register_handle(request)
 
 
-# Create your views here.
-def response_as_json(data):
-    json_str = json.dumps(data)
-    response = HttpResponse(
-        json_str,
-        content_type="application/json",
+@csrf_exempt
+def register_handle(request):
+    """
+    Process register request
+    """
+    username = request.POST.get("username")
+    password = request.POST.get("password")
+    email = request.POST.get("email")
+    lab_name = request.POST.get('labname')
+    token = request.POST.get('token')
+    group = Group.objects.get(name=lab_name)
+    lab = Laboratory.objects.get(lab_name=group)
+    print(username, password, email, lab, token)
+
+    # check username
+    if User.objects.filter(username=username):
+        return JsonResponse({"errmsg": "This username has existed!", 'result': False})
+
+    # check token
+    if token != lab.token:
+        print(token, lab.token)
+        return JsonResponse({'errmsg': 'The token of {} is not correct!'.format(lab.lab_name.upper()), 'result': False})
+
+    send_mail(
+        subject='[Quagent] New Account Registration',
+        from_email=settings.EMAIL_FROM,
+        recipient_list=[email],
+        message="""
+        Thank you for your registration for Quagent (University of Arizona)!
+        
+        Account: {}
+        Password: {}
+        
+        Please keep your personal login information properly!
+        """.format(username, password)
     )
-    response["Access-Control-Allow-Origin"] = "*"
-    return response
 
+    # if not request.POST.get("allow") == "on":
+    #     return render(request, "registration/register.html", {"errmsg": '请先同意用户协议'})
 
-def json_response(data, code=200):
-    data = {
-        "code": code,
-        "msg": "success",
-        "data": data,
-    }
-    return response_as_json(data)
-
-
-def json_error(error_string="error", code=500, **kwargs):
-    data = {
-        "code": code,
-        "msg": error_string,
-        "data": {}
-    }
-    data.update(kwargs)
-    return response_as_json(data)
-
-
-JsonResponse = json_response
-JsonError = json_error
-
-
-def pie_base() -> Pie:
-    c = (
-        Pie()
-            .add("", [list(z) for z in zip(Faker.choose(), Faker.values())])
-            .set_colors(["blue", "green", "yellow", "red", "pink", "orange", "purple"])
-            .set_global_opts(title_opts=opts.TitleOpts(title="Pie-示例"))
-            .set_series_opts(label_opts=opts.LabelOpts(formatter="{b}: {c}"))
-            .dump_options_with_quotes()
-    )
-    return c
-
-
-# class ChartView(APIView):
-#     def get(self, request, *args, **kwargs):
-#         return JsonResponse(json.loads(pie_base()))
-#
-#
-# class IndexView(APIView):
-#     def get(self, request, *args, **kwargs):
-#         return HttpResponse(content=open("./templates/index.html").read())
+    usr = User.objects.create_user(username, email, password)
+    if not usr.groups.filter(name=lab_name):
+        usr.groups.add(group)
+    return JsonResponse({'alert': 'Register success. Now you can login!', 'result': True})

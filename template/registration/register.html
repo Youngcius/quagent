@@ -1,0 +1,137 @@
+{% extends "basic.html" %}
+{% load static %}
+
+
+
+{% block content %}
+    <div class="pusher">
+        <div class="ui container">
+            <img src="{% static 'images/profile.png' %}" alt="">
+
+        </div>
+
+
+        <div class="ui inverted vertical masthead center aligned segment">
+            {#            {% if form.errors %}#}
+            {#                <p class="error">Sorry, that's not a valid username or password</p>#}
+            {#            {% endif %}#}
+
+            <div class="ui container">
+                {#                 {% csrf_token %}#}
+                <label for="username" class="ui label">User name:</label>
+                <input type="text" name="username" value="" id="username" class="ui input">
+
+                <label for="password" class="ui label">Password:</label>
+                <input type="password" name="password" value="" id="password" class="ui password">
+
+                <label for="confirm-password" class="ui label">Confirm password:</label>
+                <input type="password" name="confirm-password" value="" id="confirm-password" class="ui password">
+
+
+                <label for="email" class="ui label">Email:</label>
+                <input type="text" name="email" value="" id="email" class="ui input">
+
+                <br>
+                <label for="select-lab" class="ui label">Select laboratory:</label>
+                <select name="select-lab" id="select-lab">
+                    <option value="">---Please select---</option>
+                    {% for lab in labs %}
+                        <option value="{{ lab }}">{{ lab }}</option>
+                    {% endfor %}
+                </select>
+
+                <label for="token" class="ui label">Invitation token:</label>
+                <input type="text" name="token" id="token" class="ui input" value="">
+
+
+                <input type="submit" value="register" class="ui secondary button" id="register">
+                <input type="hidden" name="next" value="{{ next|escape }}"/>
+
+                <a href="{% url 'login' %}">Has an account? Login now.</a>
+
+                <br>
+                <span class="error" style="color: red"></span>
+            </div>
+
+
+        </div>
+
+    </div>
+
+
+    <script>
+        reg = /^\w+([-+.]\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*$/;
+
+        $('#register').click(function () {
+            username = $('#username').val();
+            password = $('#password').val();
+            confirmPassword = $('#confirm-password').val();
+            email = $('#email').val();
+            labname = $('#select-lab').val();
+            token = $('#token').val();
+
+
+            // check empty or not
+            if (username === '' || password === '' || confirmPassword === '' || email === '') {
+                $('.error').text('Registration data is not complete. Please tray again.');
+                return false;
+            }
+
+            // check password
+            if (password.length < 6) {
+                $('.error').text('The length of password should be more than 6 characters or digits. Please try again.');
+                $('#password').focus();
+                return false;
+            }
+            if (password !== confirmPassword) {
+                $('.error').text('Two passwords are not the same. Please try again.');
+                $('#confirm-password').focus();
+                return false;
+            }
+
+            // check email
+            if (!reg.test(email)) {
+                $('.error').text('The format of email is not correct. Please try again.');
+                $('#email').focus();
+                return false;
+            }
+
+            // check lab selection
+            if (labname === '') {
+                $('.error').text('Please select one specific laboratory.');
+                $('#select-lab').focus();
+                return false;
+            }
+
+            // check token
+            if (token.length !== 20) {
+                $('.error').text('Token is not in its correct format (20 characters). Please try again.')
+                $('#token').focus();
+                return false;
+            }
+
+            // check username
+            $.ajax({
+                url: "{% url 'register'%}",
+                type: 'POST',
+                dataType: 'json',
+                data: {
+                    'username': username,
+                    'password': password,
+                    'email': email,
+                    'labname': labname,
+                    'token': token
+                },
+                success: function (response) {
+                    if (response['result']) {
+                        alert(response['alert']);
+                        window.open("{% url 'login' %}", '_self')
+                    } else { // perhaps error: username, token
+                        $('.error').text(response['errmsg']);
+                    }
+                }
+            })
+
+        });
+    </script>
+{% endblock %}

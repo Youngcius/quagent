@@ -10,8 +10,10 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/3.2/ref/settings/
 """
 
-from pathlib import Path
 import os
+import json
+from pathlib import Path
+from utils.host import ipv4
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -27,24 +29,23 @@ DEBUG = True
 
 ALLOWED_HOSTS = ['*']
 
+CONFIG_JSON = 'config.json'
+
 # Application definition
 
 INSTALLED_APPS = [
+    'simpleui',  # third-part UI library, for administrative page
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    # 'login.apps.LoginConfig',
     'main.apps.MainConfig',
-    'foreign.apps.ForeignConfig',
-    # 'produce.apps.ProduceConfig',
     'acquire.apps.AcquisitionConfig',
     'hubinfo.apps.HubinfoConfig',
     'monitor.apps.MonitorConfig',
     'rest_framework',
-
 ]
 
 MIDDLEWARE = [
@@ -79,32 +80,15 @@ WSGI_APPLICATION = 'quagent.wsgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/3.2/ref/settings/#databases
-
 DATABASES = {
-    # 'default': {
-    #     'ENGINE': 'django.db.backends.sqlite3',
-    #     'NAME': BASE_DIR / 'db.sqlite3',
-    # },
-    ###################################
-    # 10.134.235.69: ECE-2 PC
-    # 'default': {
-    #     'ENGINE': 'django.db.backends.mysql',
-    #     'NAME': 'quagent',
-    #     'USER': 'root',
-    #     'PASSWORD': 'mimawangle123',
-    #     'HOST': '10.134.235.69',
-    #     'PORT': '3306'
-    # }
-    ###################################
     'default': {
-        'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'quagent',
-        'USER': 'root',
-        'PASSWORD': 'mimawangle123',
-        'HOST': 'localhost',
-        'PORT': '3306'
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': BASE_DIR / 'db.sqlite3',
     }
 }
+
+with open(CONFIG_JSON, 'r') as f:
+    DATABASES['default'] = json.load(f)['MYSQL']
 
 # Password validation
 # https://docs.djangoproject.com/en/3.2/ref/settings/#auth-password-validators
@@ -135,7 +119,7 @@ USE_I18N = True
 
 USE_L10N = True
 
-USE_TZ = True
+USE_TZ = False  # modified on 06.02
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.2/howto/static-files/
@@ -151,4 +135,112 @@ STATICFILES_DIRS = [
     os.path.join(BASE_DIR, 'static'),
 ]
 
-LOGIN_REDIRECT_URL = '/'  # 重定向到主页面
+LOGIN_REDIRECT_URL = '/'  # redirect to the main page
+
+# whether to show the right-side SimpleUI "advertising links" and "usage analysis"
+SIMPLEUI_HOME_INFO = False
+SIMPLEUI_ANALYSIS = False
+
+# set default theme, i.e., a CSS file name presenting a theme setting
+SIMPLEUI_DEFAULT_THEME = 'layui.css'  # e.g., 'purple.css', 'element.css', 'admin.lte.css'
+
+# set logo
+SIMPLEUI_LOGO = 'http://youngcius.com/images/other/cqn-logo.png'
+
+# set shown menus
+SIMPLEUI_CONFIG = {
+    # whether to use system-default menu
+    'system_keep': False,
+
+    # for menus ordering and filtering
+    # if no setting, all fields display; if set an empty list, all fields will not display
+    'menu_display': [
+        'Authentication and Authorization',
+        'User Hub Information',
+        'Resources Management',
+        'Real-time Monitoring'
+    ],
+
+    # whether to turn on the dynamic menu. if on, menus are refreshed once one user logins
+    'dynamic': False,  # generally turn it off by advice
+
+    # set menus manually
+    'menus': [
+        {
+            'app': 'auth',
+            'name': 'Authentication and Authorization',
+            'icon': 'fas fa-user-shield',
+            'models': [
+                {
+                    'name': 'Users',
+                    'icon': 'fa fa-user',
+                    'url': 'auth/user/'
+                },
+                {
+                    'name': 'Groups (Laboratories)',
+                    'icon': 'fa fa-users',
+                    # 'url': 'auth/group/'
+                    'url': '/admin/hubinfo/laboratory'
+                },
+
+            ]
+        },
+
+        {
+            'name': 'User Hub Information',
+            'icon': 'fa fa-th-list',
+            'models': [
+                {
+                    'name': 'Entangled-Photon Sources Linkage',
+                    'url': '/admin/hubinfo/epslinks/',  # all lower letters
+                    'icon': 'fa fa-info'
+                },
+                {
+                    'name': 'SPD Channels Linkage',
+                    'url': '/admin/hubinfo/spdslinks',
+                    'icon': 'fa fa-info'
+                },
+            ]
+        },
+        {
+            'name': 'Resources Management',
+            'icon': 'fa fa-tags',
+            'models': [
+                {
+                    'name': 'Reservation Records',
+                    'icon': 'fa fa-database',
+                    'url': '/admin/hubinfo/reservation/'
+
+                }
+            ]
+        },
+
+        {
+            'name': 'Real-time Monitoring',
+            'icon': 'fa fa-desktop',
+            'models': [  # append display module
+                {
+                    'name': 'Network Testbed Operation Maps',
+                    'icon': 'fa fa-map-marker',
+                    'url': 'http://127.0.0.1:8000/monitor/maps/'
+                },
+            ]
+        },
+
+    ]
+}
+
+###########################################
+# email setting (google mail)
+EMAIL_BACKEND = ...
+EMAIL_HOST = ...
+EMAIL_PORT = ...
+EMAIL_HOST_USER = ...
+EMAIL_HOST_PASSWORD = ...  # special password
+EMAIL_FROM = ...
+
+with open(CONFIG_JSON, 'r') as f:
+    email_settings = json.load(f)['EMAIL']
+
+for k, v in email_settings.items():
+    exec("{} = '{}'".format(k, v))

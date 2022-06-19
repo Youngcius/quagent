@@ -1,0 +1,37 @@
+[
+    {
+        "id": 487862,
+        "name": "Entangled photon source 2",
+        "description": "<ul>\n<li><span style=\"font-size: 12pt;\">Time-energy entangled photon source at 1550 nm\u00a0</span></li>\n</ul>",
+        "public_visibility": 0,
+        "url": "https://ua.ilab.agilent.com/equipment/487862"
+    },
+    {
+        "id": 487863,
+        "name": "Entangled photon source 1",
+        "description": "<ul>\n<li><span style=\"font-size: 12pt;\">Polarizaiton Entangled photons generated through SPDC at 1550 nm\u00a0\u00a0</span></li>\n</ul>",
+        "public_visibility": 0,
+        "url": "https://ua.ilab.agilent.com/equipment/487863"
+    },
+    {
+        "id": 487864,
+        "name": "Superconducting nanowire single-photon detectors",
+        "description": "<ul>\n<li><span style=\"font-size: 12pt;\">Quantum Opus 8 channel high-efficiency single-photon detectors accessed through optical fibers and switches&nbsp;</span></li>\n</ul>",
+        "public_visibility": 0,
+        "url": "https://ua.ilab.agilent.com/equipment/487864"
+    },
+    {
+        "id": 487865,
+        "name": "Entangled photon source 3",
+        "description": "<ul>\n<li><span style=\"font-size: 12pt;\">Time-energy entangled photon source at 1340 nm\u00a0</span></li>\n</ul>",
+        "public_visibility": 0,
+        "url": "https://ua.ilab.agilent.com/equipment/487865"
+    },
+    {
+        "id": 494547,
+        "name": "Draft equipment",
+        "description": null,
+        "public_visibility": 0,
+        "url": "https://ua.ilab.agilent.com/equipment/494547"
+    }
+]

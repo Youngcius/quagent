@@ -19,14 +19,25 @@
                 {% csrf_token %}
                 <label for="username" class="ui label">User name:</label>
                 <input type="text" name="username" value="" id="username" class="ui input">
+
                 <label for="password" class="ui label">Password:</label>
                 <input type="password" name="password" value="" id="password" class="ui password">
 
                 <input type="submit" value="login" class="ui secondary button">
                 <input type="hidden" name="next" value="{{ next|escape }}"/>
+
+                <a href="{% url 'register' %}">No account? Register one.</a>
             </form>
 
         </div>
+
+
+        <script>
+            if ("{{ alert }}" !== '') {
+                alert("{{ alert }}");
+            }
+
+        </script>
 
 
     </div>

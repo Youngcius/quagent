@@ -8,5 +8,3 @@ usr_cbm_map = {}
 usr_hist_map = {}
 usr_stsp_map = {}
 usr_tmdiff_map = {}
-
-print('tagger 模块载入')

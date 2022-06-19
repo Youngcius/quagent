@@ -1,74 +1,53 @@
-from django.db import models
+from typing import List
 from django.db.models import Model
 from django.contrib.auth.models import User
 
+from hubinfo.models import Laboratory, SPDsLinks
 
-# 内置User字段：
-# username, first_name, last_name, email, password, groups, user_permissions, ...
-# ---
-# e.g. user = User.objects.create_user(username='xujin',email='qq@qq.com',password='111111')
+import TimeTagger as tt
 
 
-
-from ..hubinfo.models import SPDsLinks
-
-
-
-def get_avail_ch(username:str):
+def get_avail_ch(usr: User) -> List[int]:
     """
     Query the routing table to get corresponding available channels of the specific user
     :return: a list of integers
     """
-    # SPDSLinks.objects.query(username)
-    # global SPDSLinks
-    res = SPDsLinks.objects.filter(user=username, linkage=True)
+    lab = Laboratory.objects.get(lab_name=usr.groups.all()[0])
+    res = SPDsLinks.objects.filter(lab=lab, linkage=True, in_use=True)
     return [item.in_ch for item in res]
+    # return [1, 2, 4, 5]  # 纯属测试用
 
 
+class UserDetector:
+    """
+    Pair of one User and one Measurement instance
+    """
+    detector_types = ['Counter', 'CountBetweenMarkers',
+                      'StartStop', 'Correlation',
+                      'TimeDifferences', 'Histogram']
 
+    def __init__(self, username: str, mode: str):
+        """
+        Initialize object, set its username and measurement mode
+        """
+        self.username = username
+        if mode not in self.detector_types:
+            raise ValueError('{} is not a supported measurement mode'.format(mode))
+        else:
+            self.mode = mode
+        self.detector = None
+        self.config = None
 
+    def create_detector(self, tagger: tt.TimeTagger):
+        """
+        :param tagger: Time Tagger instance
+        """
+        if self.config is None:
+            raise ValueError('You should set UserDetector.config property before creating it detector instance')
+        self.detector = getattr(tt, self.mode)(tagger, **self.config)
 
-
-
-
-
-
-
-
-# User-specific Measurement Configuration classes
-# class Counter(Model):
-#     binwidth = models.IntegerField(name='binwidth', help_text='bin width (unit: ps)')
-#     n_values = models.IntegerField(name='n_values', help_text='number of data points')
-#     channels = models.CharField(max_length=8)  # e.g. '1246'
-#     username = models.ForeignKey(User, on_delete=models.CASCADE)
-#
-#
-# class CounterBetweenMarker(Model):
-#     pass
-#
-#
-# class Correlation(Model):
-#     pass
-#
-#
-# class Countrate(Model):
-#     pass
-#
-#
-# class Histogram(Model):
-#     pass
-#
-#
-# class StartStop(Model):
-#     pass
-#
-#
-# class TimeDifferences(Model):
-#     pass
-#
-#
-# class Film(Model):
-#     pass
-#
-
-
+    def set_measure_config(self, **kwargs):
+        """
+        Set configuration parameters for its specific measurement mode
+        """
+        self.config = kwargs

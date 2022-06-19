@@ -1,8 +1,18 @@
-from django.http import HttpResponse
 import json
-from random import randrange
+import time
+import threading
 import numpy as np
+from django.http import HttpResponse
+from random import randrange
 from scipy.stats import norm
+
+unit_to_num = {
+    's': 1,
+    'ms': 1e-3,
+    'us': 1e-6,
+    'ns': 1e-9,
+    'ps': 1e-12
+}
 
 
 def response_as_json(data):
@@ -82,3 +92,38 @@ class Correlator:
         self.val[replaced_idx] = self.val[replaced_idx] * (1 + np.random.randn(replaced_num) * 0.1)
         self.val = np.abs(self.val)
         self.val = self.val.tolist()
+
+
+def get_data(detector, cache):
+    cache.append(detector.getData())
+
+
+def get_data_in_long_time(detector, T, t):
+    """
+    Get data in a long time interval
+    :param detector: Measurement instance defined in TimeTagger library
+    :param t: time interval for slicing the T if T is too large
+    :return: a list whose elements are also lists
+    """
+    data_cache = []
+    N = int(T / t)
+    if N == 0:
+        thread = threading.Thread(target=get_data, args=[detector, data_cache])
+        time.sleep(T)
+        thread.start()
+    else:
+        for i in range(N + 1):
+            thread = threading.Thread(target=get_data, args=[detector, data_cache])
+            time.sleep(t)
+            thread.start()
+
+    time.sleep(5)
+    return data_cache
+
+
+def cal_max_min_limits(arr, extend=0.05):
+    max_val, min_val = np.max(arr), np.min(arr)
+    max_val += extend * (max_val - min_val)
+    min_val -= extend * (max_val - min_val)
+    max_val, min_val = np.ceil(max_val), int(min_val)
+    return max_val, min_val

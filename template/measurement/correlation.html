@@ -10,10 +10,20 @@
     <div class="ui container">
         <h2 class="ui header">Correlation Measurement Parameter Configuration</h2>
         <div class="ui form" id="form-config">
-            <label for="binwidth">binwidth (ps)</label>
-            {#    default: 1e12#}
-            <input type="number" id="binwidth" name="binwidth" min="100" max="10000000000000" value="1000000000000"
-                   step="100"><br>
+
+            <label for="binwidth">Binwidth</label> {#    default: 1e12#}
+            <input type="number" id="binwidth" name="binwidth" min="1" max="1000" value="1" step="1"><br>
+
+            <label for="unit">Time Unit</label>
+            <select name="select-unit" id="select-unit">
+                <option value="s">s</option>
+                <option value="ms">ms</option>
+                <option value="us">us</option>
+                <option value="ns">ns</option>
+                <option value="ps">ps</option>
+            </select>
+
+
             <label for="n_bins">n_bins</label>
             <input type="number" id="n_bins" name="n_bins" min="10" max="1000000" value="1000" step="10"><br>
 
@@ -51,30 +61,57 @@
 
     <div class="ui divider"></div>
 
+    {#     2.   绘图表现 TimeTagger#}
+    <div class="ui container">
+        <div id="bar" style="width:1200px; height:600px;"></div>
+    </div>
+
+
     <script>
-        {#ajax 请求更新表单数据#}
+        var chart = echarts.init(document.getElementById('bar'), 'white', {renderer: 'canvas'});
+        var old_data = [];
+        var interval = 500;
+
+
+        var unitToNum = {
+            's': 1,
+            'ms': 1e-3,
+            'us': 1e-6,
+            'ns': 1e-9,
+            'ps': 1e-12
+        };
+        var unitName = $('#select-unit').val();
+        var unit = unitToNum[unitName];
+        var binwidth = $('#binwidth').val() * unit / 1e-12; // to unit "ps"
+        var n_bins = $('#n_bins').val();
+    </script>
+
+
+    <script>
+        // ajax 请求更新表单数据
+
         $('#update').click(function () {
-            {#取出数据#}
-            var binwidth = $('#binwidth').val();
-            var n_bins = $('#n_bins').val();
+            // acquire configurations
+            unitName = $('#select-unit').val();
+            unit = unitToNum[unitName];
+            binwidth = $('#binwidth').val() * unit / 1e-12;
+            n_bins = $('#n_bins').val();
+
             var ch1 = $('#ch-1').val();
             var ch2 = $('#ch-2').val();
 
-            {#发送请求#}
-            let formdata = {binwidth: binwidth, n_bins: n_bins, ch1: ch1, ch2:ch2};
-
-
-
-            {#TODO: 暂时修改到了这里#}
+            // send POST request
+            let formdata = {binwidth: binwidth, n_bins: n_bins, ch1: ch1, ch2: ch2};
             $.ajax({
                 url: "{% url 'correlation-update-config' %}",
-                type: 'GET',
+                type: 'POST',
                 data: formdata,
                 success: function (response) {
                     console.log(response, typeof response)
                 }
             })
 
+            chart.clear();
 
         })
         $('#start').click(function () {
@@ -84,8 +121,6 @@
                 type: 'GET',
                 success: function (response) {
                     console.log(response, typeof response);
-                    {#alert(response)#}
-
                 }
             })
         })
@@ -96,15 +131,10 @@
                 type: 'GET',
                 success: function (response) {
                     console.log(response, typeof response);
-                    {#alert(response)#}
-
                 }
             })
 
         })
-
-
-        {#下载数据#}
         $('#download').click(function () {
             var T = Number($('#download-time').val() / 1e3);
             var a = document.createElement('a');
@@ -114,23 +144,9 @@
     </script>
 
 
-    {#     2.   绘图表现 TimeTagger#}
-    <div class="ui container">
-        <div id="bar" style="width:1200px; height:600px;"></div>
-    </div>
-    <script>
-        var chart = echarts.init(document.getElementById('bar'), 'white', {renderer: 'canvas'});
-        var old_data = [];
-        var interval = $('#binwidth').val() / 1e9;
-        $('#update').click(function () {
-            {#根据binwidth计算刷新频率#}
-            {#interval = $('#binwidth').val() / 1e9;#}
-            {#alert(String(interval) + typeof (interval));#}
-            {#清空图中数据#}
-            {#alert(interval);#}
-            chart.clear();
-        })
 
+    <script>
+        // update chart
         $(
             function () {
                 fetchData(chart);
@@ -139,10 +155,13 @@
 
                 function fetchData() {
                     $.ajax({
-                        type: "GET",
+                        type: "POST",
                         {#'counter' 是视图函数的名字（配置url时）#}
                         url: "{% url 'correlation-chart' %}",
                         dataType: "json",
+                        data: {
+                            unit_name: unitName
+                        },
                         success: function (options) {
                             {#chart.clearData()#}
                             chart.setOption(options);
@@ -150,17 +169,10 @@
                             {#old_data form: [..., [xi, yi], ...]#}
                         }
                     });
-                    if (Math.round($('#binwidth').val() / 1e9) != Math.round(interval)) {
-                        interval = $('#binwidth').val() / 1e9;
-                        {#alert(String(interval) + ' ms!!!');#}
-                        clearInterval(timeIt);
-                        timeIt = setInterval(fetchData, interval)
-                    }
                 }
             }
         );
 
-        {# } #}
 
     </script>
 

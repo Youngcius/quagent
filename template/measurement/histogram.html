@@ -1,6 +1,179 @@
 {% extends 'basic.html' %}
 
+{#    - binwidth#}
+{#    - n_bins#}
+{#    - click channel #}
+{#    - start channel #}
+
 {% block content %}
+    {#  1.  更新测量参数#}
+    <div class="ui container">
+        <h2 class="ui header">Histogram Measurement Parameter Configuration</h2>
+        <div class="ui form" id="form-config">
+            <label for="binwidth">Binwidth</label> {#    default: 1e12#}
+            <input type="number" id="binwidth" name="binwidth" min="1" max="1000" value="1" step="1"><br>
+
+            <label for="unit">Time Unit</label>
+            <select name="select-unit" id="select-unit">
+                <option value="s">s</option>
+                <option value="ms">ms</option>
+                <option value="us">us</option>
+                <option value="ns">ns</option>
+                <option value="ps">ps</option>
+            </select>
+
+
+            <label for="n_bins">n_bins</label>
+            <input type="number" id="n_bins" name="n_bins" min="10" max="1000000" value="1000" step="10"><br>
+
+
+            <label for="ch-1">Click Channel</label>
+            <select name="select-1" id="ch-click">
+                <option>---Please select---</option>
+                {% for ch in channels %}
+                    <option value="{{ ch }}">channel {{ ch }}</option>
+                {% endfor %}
+            </select>
+
+            <label for="ch-2">Start Channel</label>
+            <select name="select-2" id="ch-start">
+                <option>---Please select---</option>
+                {% for ch in channels %}
+                    <option value="{{ ch }}">channel {{ ch }}</option>
+                {% endfor %}
+            </select>
+
+
+            <input type="submit" value="Update" id="update" class="ui primary button">
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+            <input type="submit" value="Start" id="start" class="ui secondary primary button">
+            <input type="submit" value="Stop" id="stop" class="ui secondary primary button">
+
+
+        </div>
+
+        <label for="download-time" class="ui label">Time for downloading (ms)</label>
+        <input type="number" max="1000000" step="10" min="10" id="download-time">&nbsp;&nbsp;&nbsp;&nbsp;
+        <input type="submit" value="Download" id="download" class="ui primary button">
+
+    </div>
+
+    <div class="ui divider"></div>
+
+    {#     2.   绘图表现 TimeTagger#}
+    <div class="ui container">
+        <div id="bar" style="width:1200px; height:600px;"></div>
+    </div>
+
+    <script>
+        var chart = echarts.init(document.getElementById('bar'), 'white', {renderer: 'canvas'});
+        var old_data = [];
+        var interval = 500;
+
+
+        var unitToNum = {
+            's': 1,
+            'ms': 1e-3,
+            'us': 1e-6,
+            'ns': 1e-9,
+            'ps': 1e-12
+        };
+        var unitName = $('#select-unit').val();
+        var unit = unitToNum[unitName];
+        var binwidth = $('#binwidth').val() * unit / 1e-12; // to unit "ps"
+        var n_bins = $('#n_bins').val();
+    </script>
+
+    <script>
+        // AJAX update form
+        $('#update').click(function () {
+            // acquire configurations
+            unitName = $('#select-unit').val();
+            unit = unitToNum[unitName];
+            binwidth = $('#binwidth').val() * unit / 1e-12;
+            n_bins = $('#n_bins').val();
+            var ch_click = $('#ch-click').val();
+            var ch_start = $('#ch-start').val();
+
+            // send POST request
+            let formdata = {binwidth: binwidth, n_bins: n_bins, ch_click: ch_click, ch_start: ch_start};
+            $.ajax({
+                url: "{% url 'histogram-update-config' %}",
+                type: 'POST',
+                data: formdata,
+                success: function (response) {
+                    console.log(response, typeof response)
+                }
+            })
+
+            chart.clear();
+
+
+        })
+        $('#start').click(function () {
+            // start the Counter
+            $.ajax({
+                url: "{% url 'histogram-start' %}",
+                type: 'GET',
+                success: function (response) {
+                    console.log(response, typeof response);
+                }
+            })
+        })
+        $('#stop').click(function () {
+            // stop the Counter
+            $.ajax({
+                url: "{% url 'histogram-stop' %}",
+                type: 'GET',
+                success: function (response) {
+                    console.log(response, typeof response);
+                }
+            })
+
+        })
+
+
+        // download data
+        $('#download').click(function () {
+            var T = Number($('#download-time').val() / 1e3); // ms --> s
+            var a = document.createElement('a');
+            a.href = "{% url 'histogram-download' %}" + "?T=" + String(T); // GET请求格式
+            a.click();
+        })
+    </script>
+
+
+
+    <script>
+        $(
+            function () {
+                fetchData(chart);
+
+                var timeIt = setInterval(fetchData, interval);
+
+                function fetchData() {
+                    $.ajax({
+
+                        {#'counter' 是视图函数的名字（配置url时）#}
+                        url: "{% url 'histogram-chart' %}",
+                        type: "POST",
+                        data: {
+                            unit_name: unitName,
+                        },
+                        dataType: "json",
+                        success: function (options) {
+                            chart.setOption(options);
+                            {#old_data = chart.getOption().series[0].data;#}
+                            {#old_data form: [..., [xi, yi], ...]#}
+                        }
+                    });
+                }
+            }
+        );
+
+    </script>
+
 
 
 {% endblock %}
+

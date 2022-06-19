@@ -1,0 +1,160 @@
+{
+    "ilab_response": {
+        "reservations": [
+            {
+                "id": 5083257,
+                "name": "INQUIRE-ZY-4",
+                "description": "",
+                "projected_cost": "0.0",
+                "state": "confirmed",
+                "start_time": "2022-05-05 8:48",
+                "end_time": "2022-05-05 8:50",
+                "owner": {
+                    "id": 1701472,
+                    "name": "Zhaohui Yang",
+                    "first_name": "Zhaohui",
+                    "last_name": "Yang",
+                    "email": "zhy@email.arizona.edu",
+                    "phone": "5205247501",
+                    "employee_id": "N/A"
+                },
+                "equipment": {
+                    "id": 487863,
+                    "name": "Entangled photon source 1",
+                    "description": "<ul>\n<li><span style=\"font-size: 12pt;\">Polarizaiton Entangled photons generated through SPDC at 1550 nm\u00a0\u00a0</span></li>\n</ul>",
+                    "public_visibility": 0,
+                    "url": "https://ua.ilab.agilent.com/equipment/487863"
+                },
+                "lab": {
+                    "id": 995172,
+                    "name": "Zhang, Zheshen (UA) Lab",
+                    "principal_investigators": [
+                        {
+                            "id": 995170,
+                            "name": "Zheshen Zhang",
+                            "first_name": "Zheshen",
+                            "last_name": "Zhang",
+                            "email": "zsz@email.arizona.edu",
+                            "phone": null,
+                            "employee_id": "zsz"
+                        }
+                    ]
+                },
+                "attachments": [],
+                "customer_institution": {
+                    "id": 786830,
+                    "name": "The University of Arizona "
+                }
+            },
+            {
+                "id": 5083253,
+                "name": "INQUIRE-ZY-4",
+                "description": "",
+                "projected_cost": "0.0",
+                "state": "confirmed",
+                "start_time": "2022-05-05 8:53",
+                "end_time": "2022-05-05 8:54",
+                "owner": {
+                    "id": 1701472,
+                    "name": "Zhaohui Yang",
+                    "first_name": "Zhaohui",
+                    "last_name": "Yang",
+                    "email": "zhy@email.arizona.edu",
+                    "phone": "5205247501",
+                    "employee_id": "N/A"
+                },
+                "equipment": {
+                    "id": 487864,
+                    "name": "Superconducting nanowire single-photon detectors",
+                    "description": "<ul>\n<li><span style=\"font-size: 12pt;\">Quantum Opus 8 channel high-efficiency single-photon detectors accessed through optical fibers and switches&nbsp;</span></li>\n</ul>",
+                    "public_visibility": 0,
+                    "url": "https://ua.ilab.agilent.com/equipment/487864"
+                },
+                "lab": {
+                    "id": 995172,
+                    "name": "Zhang, Zheshen (UA) Lab",
+                    "principal_investigators": [
+                        {
+                            "id": 995170,
+                            "name": "Zheshen Zhang",
+                            "first_name": "Zheshen",
+                            "last_name": "Zhang",
+                            "email": "zsz@email.arizona.edu",
+                            "phone": null,
+                            "employee_id": "zsz"
+                        }
+                    ]
+                },
+                "attachments": [],
+                "customer_institution": {
+                    "id": 786830,
+                    "name": "The University of Arizona "
+                }
+            },
+            {
+                "id": 5083251,
+                "name": "INQUIRE-ZY-4",
+                "description": "",
+                "projected_cost": "0.0",
+                "state": "confirmed",
+                "start_time": "2022-05-01 17:40",
+                "end_time": "2022-05-01 18:20",
+                "owner": {
+                    "id": 1701472,
+                    "name": "Zhaohui Yang",
+                    "first_name": "Zhaohui",
+                    "last_name": "Yang",
+                    "email": "zhy@email.arizona.edu",
+                    "phone": "5205247501",
+                    "employee_id": "N/A"
+                },
+                "equipment": {
+                    "id": 487863,
+                    "name": "Entangled photon source 1",
+                    "description": "<ul>\n<li><span style=\"font-size: 12pt;\">Polarizaiton Entangled photons generated through SPDC at 1550 nm\u00a0\u00a0</span></li>\n</ul>",
+                    "public_visibility": 0,
+                    "url": "https://ua.ilab.agilent.com/equipment/487863"
+                },
+                "lab": {
+                    "id": 995172,
+                    "name": "Zhang, Zheshen (UA) Lab",
+                    "principal_investigators": [
+                        {
+                            "id": 995170,
+                            "name": "Zheshen Zhang",
+                            "first_name": "Zheshen",
+                            "last_name": "Zhang",
+                            "email": "zsz@email.arizona.edu",
+                            "phone": null,
+                            "employee_id": "zsz"
+                        }
+                    ]
+                },
+                "attachments": [],
+                "customer_institution": {
+                    "id": 786830,
+                    "name": "The University of Arizona "
+                }
+            }
+        ],
+        "ilab_metadata": {
+            "offset": 0,
+            "total_pages": 1,
+            "next_page": null,
+            "previous_page": null,
+            "per_page": 30,
+            "total": 4,
+            "available_filters": {
+                "page": "integer (default 1)",
+                "per_page": "integer (default 30)",
+                "from_date": "string ISO 8601 formatted in UTC (optional)",
+                "to_date": "string ISO 8601 formatted in UTC (optional)",
+                "q": "string (optional)",
+                "has_recurring": "0 or 1 (optional)",
+                "order": "order field name",
+                "name": "string (optional)",
+                "states": "valid request states(comma separated list): cancelled,completed,core_disagreement,disagreement,draft,equipment_scheduling,financials_approved,financials_rejected,needs_financial_reapproval,processing,proposed,requested,researcher_in_agreement,service_center_in_agreement "
+            }
+        }
+    }
+}

@@ -22,20 +22,6 @@
 
             <div class="item">
                 <div class="right floated content">
-                    <a href="{% url 'correlation' %}" target="_blank">
-                        <div class="ui primary button">Select</div>
-                    </a>
-                </div>
-                {#                <img class="ui avatar image" src="/images/avatar2/small/lindsay.png">#}
-                <div class="content">
-                    <label class="ui label">Correlation</label>
-                    Time-correlated detection of one/multi-way photon flew.
-                </div>
-            </div>
-
-
-            <div class="item">
-                <div class="right floated content">
                     <a href="{% url 'startstop' %}" target="_blank">
                         <div class="ui primary button">Select</div>
                     </a>
@@ -44,20 +30,6 @@
                 <div class="content">
                     <label class="ui label">StartStop</label>
                     Start-Stop Measurement based on pulses.
-                </div>
-            </div>
-
-
-            <div class="item">
-                <div class="right floated content">
-                    <a href="{% url 'timedifferences' %}" target="_blank">
-                        <div class="ui primary button">Select</div>
-                    </a>
-                </div>
-                {#                <img class="ui avatar image" src="/images/avatar2/small/molly.png">#}
-                <div class="content">
-                    <label class="ui label">TimeDifferences</label>
-                    Measuring the time differences between pulses.
                 </div>
             </div>
 
@@ -75,7 +47,22 @@
                 </div>
             </div>
 
-{#            以上是目前已经实现的 @ 2022.01.10#}
+            <div class="item">
+                <div class="right floated content">
+                    <a href="{% url 'correlation' %}" target="_blank">
+                        <div class="ui primary button">Select</div>
+                    </a>
+                </div>
+                {#                <img class="ui avatar image" src="/images/avatar2/small/lindsay.png">#}
+                <div class="content">
+                    <label class="ui label">Correlation</label>
+                    Time-correlated detection of one/multi-way photon flew.
+                </div>
+            </div>
+
+
+
+            {#            以上是目前已经实现的 @ 2022.01.10#}
 
 
             <div class="item">
@@ -90,7 +77,6 @@
                     Count Between Markers measurement mode.
                 </div>
             </div>
-
 
 
         </div>

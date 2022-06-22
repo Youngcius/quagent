@@ -130,23 +130,6 @@
             var a = document.createElement('a');
             a.href = "{% url 'counter-download' %}" + "?T=" + String(T); // GET请求格式
             a.click();
-            {#$.ajax({#}
-            {#    url: "{% url 'counter-download' %}",#}
-            {#    type: 'GET',#}
-            {#    data: {T: T}, // ms --> s#}
-            {#success: function (response) {#}
-            {#    // 数据在 response 中#}
-            {#alert(response);#}
-            {#alert(typeof response);#}
-            {#alert(response.path);#}
-            {#location.href = response.path;#}
-            {#alert(response.data)#}
-            {#var a = document.createElement('a');#}
-            {#a.href = "{% url 'counter-download' %}" + "?T=" + String(T); // GET请求格式#}
-            {#a.click();#}
-            {#    console.log(response, typeof response);#}
-            {# }#}
-            {# })#}
         })
     </script>
 
@@ -179,78 +162,9 @@
                 }
             }
         );
-        {##}
-        {##}
-        {#function getDynamicData() {#}
-        {#    $.ajax({#}
-        {#        type: "GET",#}
-        {#        url: "{% url 'counter-update' %}",#}
-        {#        dataType: 'json',#}
-        {#        success: function (result) {#}
-        {#            old_data.push([result.name, result.value]);#}
-        {#            chart.setOption({#}
-        {#                series: [{#}
-        {#                    data: old_data#}
-        {#                }]#}
-        {#            });#}
-        {#        }#}
-        {#    });#}
-        {# } #}
+
 
     </script>
-
-    {##}
-    {##}
-    {# 2.   绘图表现 Example#}
-    {#    <div class="ui container">#}
-    {#        <div id="bar" style="width:1200px; height:600px;"></div>#}
-    {#    </div>#}
-    {#    <script>#}
-    {#        var chart = echarts.init(document.getElementById('bar'), 'white', {renderer: 'canvas'});#}
-    {#        var old_data = [];#}
-    {#        $(#}
-    {#            function () {#}
-    {#                fetchData(chart);#}
-    {#                setInterval(fetchData, {{ interval }});#}
-    {#            }#}
-    {#        );#}
-    {##}
-    {#        function fetchData() {#}
-    {#            $.ajax({#}
-    {#                type: "GET",#}
-    {#'counter' 是视图函数的名字（配置url时）#}
-    {#                url: "{% url 'counter' %}",#}
-    {#                dataType:#}
-    {#                    "json",#}
-    {#                success: function (result) {#}
-    {#                    var options = result.data;#}
-    {#                    chart.setOption(options);#}
-    {#                    old_data = chart.getOption().series[0].data;#}
-    {#old_data form: [..., [xi, yi], ...]#}
-    {#                }#}
-    {#            })#}
-    {#            ;#}
-    {#        }#}
-    {##}
-    {#        function getDynamicData() {#}
-    {#            $.ajax({#}
-    {#                type: "GET",#}
-    {#                url: "{% url 'counter-update' %}",#}
-    {#                dataType: 'json',#}
-    {#                success: function (result) {#}
-    {#                    var options = result.data;#}
-    {#                    old_data.push([options.name, options.value]);#}
-    {#                    chart.setOption({#}
-    {#                        series: [{#}
-    {#                            data: old_data#}
-    {#                        }]#}
-    {#                    });#}
-    {#                }#}
-    {#            });#}
-    {#        }#}
-    {##}
-    {#    </script>#}
-    {##}
 
 
 

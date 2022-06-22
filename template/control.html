@@ -29,9 +29,6 @@
 
         {#EPs#}
         <h2 class="ui header">Entangled-Photon Sources Occupancy</h2>
-        {#<p class="title" style="font-size: 18px; font-weight:bold;"> Table-基本示例</p>#}
-        {#<p class="subtitle" style="font-size: 12px;"> 我是副标题支持换行哦</p>#}
-        {#        <table class="ui compact celled definition table">#}
         <table class="ui celled table">
             <thead>
             <tr>
@@ -71,14 +68,8 @@
                     <td>
                         <input type="datetime-local" id="ep-start-time-{{ ep.idx }}"> — <input type="datetime-local"
                                                                                                id="ep-end-time-{{ ep.idx }}">
-                        {#                    min="2017-06-01T08:30"#}
                     </td>
-                    {#                    <td><input type="number" min="10" max="120" step="10" value="10" id="ep-period-{{ ep.idx }}"></td>#}
-                    {#                    {% if ep.avail %}#}
                     <td><input type="text" value="" id="ep-remain-{{ ep.idx }}" readonly></td>
-                    {#                    {% else %}#}
-                    {#                        <td><input type="text" readonly></td>#}
-                    {#                    {% endif %}#}
                 </tr>
             {% endfor %}
             </tbody>
@@ -99,14 +90,12 @@
     {#SNSPD#}
     <div class="ui container">
         <h2 class="ui header">Data Acquisition Channels Occupancy</h2>
-        {#        <table class="ui compact celled definition table">#}
         <table class="ui celled table">
 
             <thead>
             <tr>
                 <th>Channel</th>
                 <th>Status</th>
-                {#            <th>Remark</th>#}
                 <th>Operation</th>
                 <th>Period to apply</th>
                 <th>Time remaining (minute)</th>
@@ -116,7 +105,6 @@
             {% for spd in spds %}
                 <tr>
                     <td>{{ spd.idx }}</td>
-                    {#                <td>{{ sp.utility }}</td>#}
                     {% if spd.avail %}
                         {#status#}
                         <td class="positive"><i class="icon checkmark"></i>Available</td>
@@ -137,17 +125,11 @@
                         </td>
 
                     {% endif %}
-                    {#                    <td><input type="number" min="10" max="120" step="10" value="10" id="spd-period-{{ spd.idx }}"></td>#}
                     <td>
                         <input type="datetime-local" id="spd-start-time-{{ spd.idx }}"> — <input type="datetime-local"
                                                                                                  id="spd-end-time-{{ spd.idx }}">
-                        {#                    min="2017-06-01T08:30"#}
                     </td>
-                    {#                    {% if spd.avail %}#}
                     <td><input type="text" id="spd-remain-{{ spd.idx }}" value="" readonly></td>
-                    {#                    {% else %}#}
-                    {#                        <td><input type="text" readonly></td>#}
-                    {#                    {% endif %}#}
                 </tr>
             {% endfor %}
             </tbody>
@@ -165,49 +147,6 @@
 
 
     <script>
-        {#$('#sm').click(function () {#}
-        {#    $.ajax({#}
-        {#        url: "{% url 'sendmail' %}",#}
-        {#        type: 'GET',#}
-        {#        success: function (response){#}
-        {#            console.log(typeof response);#}
-        {#        }#}
-        {#    })#}
-        {# } );#}
-
-        {#原来的申请和释放资源（即刻，无预定时间）#}
-        {#$('button').click(function () {#}
-        {#    var val = $(this).val();#}
-        {#    if (typeof val === 'string') {#}
-        {#        var command = val.split('-'); // parse value into http GET data#}
-        {#        if (command.length === 3 && (command[0] === 'release' || command[0] === 'apply')) {#}
-        {#            if (command[0] === 'apply') {#}
-        {#                $.ajax({#}
-        {#                    url: "{% url 'apply' %}" + '?resource=' + command[1] + '&ch=' + command[2],#}
-        {#                    type: 'GET',#}
-        {#                    success: function (response) {#}
-        {#                        console.log(response, typeof response);#}
-        {#                        location.reload(true);#}
-        {#                        alert('You have occupied channel "' + command[2] + '" from now on');#}
-        {##}
-        {#                    }#}
-        {#                });#}
-        {#            } else {#}
-        {#                $.ajax({#}
-        {#                    url: "{% url 'release' %}" + '?resource=' + command[1] + '&ch=' + command[2],#}
-        {#                    type: 'GET',#}
-        {#                    success: function (response) {#}
-        {#                        console.log(response, typeof response);#}
-        {#                        location.reload(true);#}
-        {#                        alert('You have released channel "' + command[2] + '" successfully');#}
-        {#                    }#}
-        {#                });#}
-        {#            }#}
-        {##}
-        {#        }#}
-        {##}
-        {#    }#}
-        {# });#}
         var clock = setInterval(updateRemainTime, 2000); // unit: ms
 
         function updateRemainTime() {
@@ -236,40 +175,6 @@
             {% endfor %}
 
         }
-
-        {##}
-        {#var second;//时 分 秒#}
-        {#second = 0;//初始化#}
-        {##}
-        {#var clock;//计时器#}
-        {#function resetTimer()//重置#}
-        {#{#}
-        {#    clearInterval(clock);#}
-        {#    second = 0;#}
-        {#    document.getElementById('timeValue').value = second + '秒';#}
-        {# }#}
-        {##}
-        {#function startTimer()//开始#}
-        {#{#}
-        {#    clock = setInterval(timer, 10000);// unit: ms#}
-        {# }#}
-
-        {#function stopTimer() {#}
-        {#    //停止计时#}
-        {#    clearInterval(clock);#}
-        {#    document.getElementById('timeValue').value = second + '秒';#}
-        {# }#}
-
-        //计时函数
-        {#function timer() {#}
-        {#    second++;#}
-        {#    for (const argument of arguments) {#}
-        {#        #}
-        {#    }#}
-        {#    $('#ep-period')#}
-        {#    document.getElementById('timeValue').value = second + '秒';#}
-        {# }#}
-
 
         $('button').click(function () {
             var val = $(this).val();
@@ -334,43 +239,10 @@
                             }
                         });
                     }
-
                 }
-
             }
         });
-
-
     </script>
-
-
-    {##}
-    {#    <script>#}
-    {#            $('#update').click(function () {#}
-    {#取出数据#}
-    {#            var binwidth = $('#binwidth').val();#}
-    {#            var n_values = $('#n_values').val();#}
-    {#            var channels = [];#}
-    {##}
-    {#            $("input[name='channels']:checked").each(function (i) {//把所有被选中的复选框的值存入数组#}
-    {#                channels[i] = $(this).val();#}
-    {#            });#}
-    {#发送请求#}
-    {#            let formdata = {binwidth: binwidth, n_values: n_values, channels: channels};#}
-    {##}
-    {#            $.ajax({#}
-    {#                url: "{% url 'counter-update-config' %}",#}
-    {#                type: 'GET',#}
-    {#                data: formdata,#}
-    {#                success: function (response) {#}
-    {#                    console.log(response, typeof response)#}
-    {#                }#}
-    {#            })#}
-    {##}
-    {##}
-    {#        })    #}
-    {#    </script>#}
-
 
 {% endblock %}
 

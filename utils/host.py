@@ -7,9 +7,6 @@ import sys
 import glob
 import socket
 
-ipv4 = socket.gethostbyname(socket.gethostname())
-tagger_port = 23000
-
 
 def serial_ports():
     """
@@ -48,3 +45,19 @@ def serial_available(port):
     except OSError:
         port_status = False
     return port_status
+
+
+def get_host_ip():
+    try:
+        s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+        s.connect(('8.8.8.8', 80))
+        ip = s.getsockname()[0]
+    finally:
+        s.close()
+
+    return ip
+
+
+# ipv4 = socket.gethostbyname(socket.gethostname())
+ipv4 = get_host_ip()
+tagger_port = 23000

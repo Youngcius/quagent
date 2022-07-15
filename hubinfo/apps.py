@@ -1,5 +1,6 @@
 import csv
 import uuid
+from datetime import datetime
 from django.apps import AppConfig
 from utils.variable import default_password, default_email
 from utils.switch import ep_switch, spd_switch
@@ -17,6 +18,7 @@ class HubinfoConfig(AppConfig):
         init_labs()
         init_links()
         init_switches()
+        check_reservations()
 
 
 def init_labs():
@@ -62,6 +64,10 @@ def init_links():
     script to create initial linkage information database, and initial 16 users corresponding to 16 laboratories
     """
     from .models import EPsLinks, SPDsLinks, Laboratory
+
+    ###################################################
+    # 1. create links
+
     # 1) Entangled-Photons Switch linkage
     eps_form = read_csv_as_json('static/data/eps.csv')
 
@@ -92,6 +98,26 @@ def init_links():
             )
             print('created link', link)
 
+    ###################################################
+    # 2. initialize linkage status
+    eps_links = EPsLinks.objects.all()
+    spds_links = SPDsLinks.objects.all()
+    for link in eps_links:
+        if link.out_ch == 16:
+            link.linkage = True
+        else:
+            link.linkage = False
+        link.in_use = False
+        link.save()
+
+    for link in spds_links:
+        if link.out_ch == 1:
+            link.linkage = True
+        else:
+            link.linkage = False
+        link.in_use = False
+        link.save()
+
 
 def init_switches():
     """
@@ -103,6 +129,7 @@ def init_switches():
     # EPs & SPDs
     ep_links = EPsLinks.objects.filter(linkage=True)
     spd_links = SPDsLinks.objects.filter(linkage=True)
+    print(ep_links, spd_links, sep='\n')
     print('initialize EPs switches ... ')
     for link in ep_links:
         ep_switch.set_outer_channel(link.in_ch, link.out_ch)
@@ -112,6 +139,18 @@ def init_switches():
     print('=== Switches status ===')
     print(ep_switch.name, ep_switch.status)
     print(spd_switch.name, spd_switch.status)
+
+
+def check_reservations():
+    """
+    If there are reservations whose end time is greater than now, set it to now
+    """
+    from .models import Reservation
+    now = datetime.now()
+    reservations = Reservation.objects.filter(end_time__gte=now)
+    for res in reservations:
+        res.end_time = now
+        res.save()
 
 
 def read_csv_as_json(fname: str):

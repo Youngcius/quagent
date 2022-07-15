@@ -17,7 +17,8 @@ tl_query = Timeloop()
 query_interval = 10  # unit: minute
 
 
-@tl_query.job(interval=timedelta(seconds=query_interval * 60))
+# @tl_query.job(interval=timedelta(seconds=query_interval * 60))
+@tl_query.job(interval=timedelta(seconds=30))
 def query_reservation():
     """
     Query reservation information every 15 minutes

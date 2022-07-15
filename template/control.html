@@ -50,7 +50,7 @@
                     <td>{{ ep.info }}</td>
                     {% if ep.avail %}
                         {#status#}
-                        <td class="positive"><i class="icon checkmark"></i>Available</td>
+                        <td class="positive"><i class="icon checkmark"></i>Active</td>
                         {#operation#}
                         <td>
                             <button class="ui small disabled button">Apply</button>
@@ -59,7 +59,7 @@
                             </button>
                         </td>
                     {% else %}
-                        <td class="negative"><i class="icon close"></i>Unavailable</td>
+                        <td class="negative"><i class="icon close"></i>Inactive</td>
                         <td>
                             <button class="ui small button" id="apply-ep-{{ ep.idx }}" value="apply-ep-{{ ep.idx }}">
                                 Apply
@@ -119,7 +119,7 @@
                     {#                <td>{{ sp.utility }}</td>#}
                     {% if spd.avail %}
                         {#status#}
-                        <td class="positive"><i class="icon checkmark"></i>Available</td>
+                        <td class="positive"><i class="icon checkmark"></i>Active</td>
                         {#operation#}
                         <td>
                             <button class="ui small disabled button">Apply</button>
@@ -128,7 +128,7 @@
                             </button>
                         </td>
                     {% else %}
-                        <td class="negative"><i class="icon close"></i>Unavailable</td>
+                        <td class="negative"><i class="icon close"></i>Inactive</td>
                         <td>
                             <button class="ui small button" id="apply-spd-{{ spd.idx }}"
                                     value="apply-spd-{{ spd.idx }}">Apply

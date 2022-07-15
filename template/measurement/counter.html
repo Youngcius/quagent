@@ -53,8 +53,7 @@
     <script>
         var chart = echarts.init(document.getElementById('bar'), 'white', {renderer: 'canvas'});
         var old_data = [];
-        {#根据binwidth计算刷新频率#}
-        var interval = 500;
+        var interval = 200;
         {#ajax 请求更新表单数据#}
         var unitToNum = {
             's': 1,

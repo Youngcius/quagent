@@ -38,7 +38,7 @@ lab,in_ch,out_ch,linkage
 8,2,8,False
 8,3,8,False
 8,4,8,False
-8,5,8,True
+8,5,8,False
 9,1,9,False
 9,2,9,False
 9,3,9,False
@@ -50,7 +50,7 @@ lab,in_ch,out_ch,linkage
 10,4,10,False
 10,5,10,False
 11,1,11,False
-11,2,11,True
+11,2,11,False
 11,3,11,False
 11,4,11,False
 11,5,11,False
@@ -62,7 +62,7 @@ lab,in_ch,out_ch,linkage
 13,1,13,False
 13,2,13,False
 13,3,13,False
-13,4,13,True
+13,4,13,False
 13,5,13,False
 14,1,14,False
 14,2,14,False
@@ -75,7 +75,7 @@ lab,in_ch,out_ch,linkage
 15,4,15,False
 15,5,15,False
 16,1,16,True
-16,2,16,False
+16,2,16,True
 16,3,16,True
-16,4,16,False
-16,5,16,False
+16,4,16,True
+16,5,16,True

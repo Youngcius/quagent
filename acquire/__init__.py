@@ -13,8 +13,8 @@ if tagger is None and len(tt.scanTimeTagger()) != 0:
     tagger = tt.createTimeTagger()
 
     # TODO: delete the following once in real usage
-    for i in range(1, 9):
-        tagger.setTestSignal(i, True)
+    # for i in range(1, 9):
+    #     tagger.setTestSignal(i, True)
 
 print('tagger global variable initialized')
 print('tagger NOW: {}'.format(tagger))

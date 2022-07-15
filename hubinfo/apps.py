@@ -1,7 +1,7 @@
 import csv
 import uuid
 from datetime import datetime
-from typing import List, Dict
+from typing import List,Dict
 from django.apps import AppConfig
 from utils.variable import default_password, default_email
 from utils.switch import ep_switch, spd_switch
@@ -16,10 +16,61 @@ class HubinfoConfig(AppConfig):
         """
         Configure necessary data items if not existing
         """
-        init_labs()
+        # init_labs()
+        modify_labs()
         init_links()
         init_switches()
         check_reservations()
+
+
+def modify_labs():
+    from django.contrib.auth.models import User, Group
+    from .models import Laboratory
+
+    labs_form = read_csv_as_json('static/data/labs.csv')
+
+    for i, lab in enumerate(labs_form):
+        name = lab.pop('lab_name')
+        group = Group.objects.get(name=name)
+
+        lab_db = Laboratory.objects.get(lab_name=group)
+
+        lab_db.pi_email = lab['pi_email']
+        lab_db.pi_phone = lab['pi_phone']
+        lab_db.location = lab['location']
+        lab_db.pi_name = lab['pi_name']
+
+        lab_db.save()
+
+        # +-----------------+--------------+------+-----+---------+----------------+
+        # | id              | bigint       | NO   | PRI | NULL    | auto_increment |
+        # | lab_order       | int          | NO   | UNI | NULL    |                |
+        # | pi_name         | varchar(30)  | NO   |     | NULL    |                |
+        # | pi_email        | varchar(254) | NO   |     | NULL    |                |
+        # | pi_phone        | varchar(15)  | NO   |     | NULL    |                |
+        # | location        | varchar(50)  | NO   |     | NULL    |                |
+        # | token           | varchar(30)  | NO   |     | NULL    |                |
+        # | default_user_id | int          | NO   | MUL | NULL    |                |
+        # | lab_name_id     | varchar(150) | NO   | UNI | NULL    |                |
+        # +-----------------+--------------+------+-----+---------+----------------+
+
+        # +----+-----------+----------------+----------+----------+----------+----------------------+-----------------+-------------+
+        # | id | lab_order | pi_name        | pi_email | pi_phone | location | token                | default_user_id | lab_name_id |
+        # +----+-----------+----------------+----------+----------+----------+----------------------+-----------------+-------------+
+        # |  1 |         1 | Zhesheng Zhang |          |          |          | 607aca5ee1b94d32a2ea |               1 | ece-1       |
+        # |  2 |         2 |                |          |          |          | e4495e4f9def4dffabcc |               2 | ece-2       |
+        # |  3 |         3 | Zhesheng Zhang |          |          |          | 74b49bf25e1b4c85a8f2 |               3 | mse-1       |
+        # |  4 |         4 |                |          |          |          | 99f4d91b07b542c19fd6 |               4 | pas-1       |
+        # |  5 |         5 |                |          |          |          | 41db7733e3fc4232ab39 |               5 | pas-2       |
+        # +----+-----------+----------------+----------+----------+----------+----------------------+-----------------+-------------+
+
+        # lab_name, lab_order, pi_name, pi_email, pi_phone, location
+        # ece - 1, 1, Zhesheng
+        # Zhang, zsz @ arizona.edu, 5206216075,
+#         [{'lab_name': 'ece-1', 'lab_order': '1', 'pi_name': 'Zhesheng Zhang', 'pi_email': '', 'pi_phone': '', 'location': ''},
+#         {'lab_name': 'ece-2', 'lab_order': '2', 'pi_name': '', 'pi_email': '', 'pi_phone': '', 'location': ''},
+#         {'lab_name': 'mse-1', 'lab_order': '3', 'pi_name': 'Zhesheng Zhang', 'pi_email': '', 'pi_phone': '', 'location': ''}]
+
 
 
 def init_labs():
@@ -154,7 +205,7 @@ def check_reservations():
         res.save()
 
 
-def read_csv_as_json(fname: str) -> List[Dict[str, str]]:
+def read_csv_as_json(fname: str) -> List[Dict[str,str]]:
     """
     Read CSV file as JSON format, i.e., dict type in Python
     """

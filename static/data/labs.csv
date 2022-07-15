@@ -1,17 +1,17 @@
 lab_name,lab_order,pi_name,pi_email,pi_phone,location
-ece-1,1,Zhesheng Zhang,,,
+ece-1,1,Zhesheng Zhang,zsz@arizona.edu,5206216075,
 ece-2,2,,,,
-mse-1,3,Zhesheng Zhang,,,
-pas-1,4,,,,
-pas-2,5,,,,
-osc-1,6,,,,
-osc-2,7,,,,
-osc-3,8,,,,
+mse-1,3,Zhesheng Zhang,zsz@arizona.edu,5206216075,155
+pas-1,4,Weigang Wang,wgwang@physics.arizona.edu,5206268846,449
+pas-2,5,John Schaibley,johnschaibley@arizona.edu,5206265112,156
+osc-1,6,Linran Fan,lfan@optics.arizona.edu,5206210174,556
+osc-2,7,Dalziel Wilson,dalziel@optics.arizona.edu,5206212584,676
+osc-3,8,Jason Jones,rjjones@optics.arizona.edu,5206264634,656
 osc-4,9,,,,
 osc-5,10,,,,
-bio-1,11,,,,
-bio-2,12,,,,
-bio-3,13,,,,
+bio-1,11,Jennifer Barton,barton@arizona.edu,5206260314,O84
+bio-2,12,Urs Utzinger,utzinger@arizona.edu,5209750522,O84
+bio-3,13,Marek Romanowski,marekrom@arizona.edu,5206261578,8C/8D
 res-1,14,,,,
 res-2,15,,,,
 res-3,16,,,,

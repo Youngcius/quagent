@@ -80,6 +80,8 @@ def get_local_ip():
 ipv4 = get_host_ip()
 tagger_port = 23000
 
+print('IPv4 address:', ipv4)
+
 if __name__ == '__main__':
     print(ipv4)
     print(get_host_ip())

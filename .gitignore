@@ -139,3 +139,4 @@ dmypy.json
 #output/
 
 config.json
+project/

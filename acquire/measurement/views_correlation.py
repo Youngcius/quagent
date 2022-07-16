@@ -4,6 +4,7 @@ Data acquisition in Correlation mode
 import uuid
 import datetime
 import copy
+
 from pyecharts import options as opts
 from pyecharts import charts
 
@@ -139,12 +140,12 @@ def correlation_fig(username: str, x_unit: str = 'ps') -> str:
             vals = correlation.getData()
             ymax, ymin = cal_max_min_limits(vals)
             hist.add_xaxis((correlation.getIndex() * x_scale).tolist())
-            print(correlation.getIndex()[:10], correlation.getIndex()[-10:])
             hist.add_yaxis(
                 series_name='time difference',
                 y_axis=vals.tolist(),
                 label_opts=opts.LabelOpts(is_show=False)
             )
+
     hist.set_global_opts(
         title_opts=opts.TitleOpts(title='Time Correlation Counting'),
         xaxis_opts=opts.AxisOpts(name='Time ({})'.format(x_unit)),

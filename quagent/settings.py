@@ -15,6 +15,7 @@ import json
 from pathlib import Path
 from utils.host import ipv4
 
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -222,7 +223,9 @@ SIMPLEUI_CONFIG = {
                 {
                     'name': 'Network Testbed Operation Maps',
                     'icon': 'fa fa-map-marker',
-                    'url': 'http://127.0.0.1:8000/monitor/maps/'
+                    # 'url': 'http://127.0.0.1:8000/monitor/maps/'
+                    'url': 'http://{}:8000/monitor/maps/'.format(ipv4)
+
                 },
             ]
         },

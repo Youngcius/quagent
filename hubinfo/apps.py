@@ -128,9 +128,8 @@ def init_switches():
 
     # according to database, initialize status of optical switches
     # EPs & SPDs
-    ep_links = EPsLinks.objects.filter(linkage=True)
-    spd_links = SPDsLinks.objects.filter(linkage=True)
-    print(ep_links, spd_links, sep='\n')
+    ep_links = EPsLinks.objects.filter(linkage=True)  # 5 links
+    spd_links = SPDsLinks.objects.filter(linkage=True)  # 8 links
     print('initialize EPs switches ... ')
     for link in ep_links:
         ep_switch.set_outer_channel(link.in_ch, link.out_ch)

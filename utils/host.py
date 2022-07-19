@@ -61,3 +61,7 @@ def get_host_ip():
 # ipv4 = socket.gethostbyname(socket.gethostname())
 ipv4 = get_host_ip()
 tagger_port = 23000
+
+if __name__ == '__main__':
+    print('COM ports:', serial_ports())
+    print('IPv4:', ipv4)

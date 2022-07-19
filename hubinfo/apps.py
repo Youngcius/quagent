@@ -129,7 +129,6 @@ def init_switches():
     # EPs & SPDs
     ep_links = EPsLinks.objects.filter(linkage=True)
     spd_links = SPDsLinks.objects.filter(linkage=True)
-    print(ep_links, spd_links, sep='\n')
     print('initialize EPs switches ... ')
     for link in ep_links:
         ep_switch.set_outer_channel(link.in_ch, link.out_ch)

@@ -132,13 +132,11 @@ def startstop_fig(username: str, x_unit: str = 'ps') -> str:
         startstop = usr_stsp_map[username].detector
         if startstop.isRunning():
             data = startstop.getData()  # size [N ,2]
-            # ymax, ymin = cal_max_min_limits(data[:, 1]) data长度可能不超过1
-            vals = np.abs(np.random.randn(len(data)))  # TODO, delete this
+            ymax, ymin = cal_max_min_limits(data[:, 1])  # data长度可能不超过1
             hist.add_xaxis((data[:, 0] * x_scale).tolist())
             hist.add_yaxis(
                 series_name='time difference',
-                # y_axis=data[:, 1].tolist(),
-                y_axis=vals.tolist(),  # TODO, delete this
+                y_axis=data[:, 1].tolist(),
                 label_opts=opts.LabelOpts(is_show=False)
             )
     hist.set_global_opts(
@@ -155,4 +153,3 @@ def startstop_chart_view(request):
         request.user.username,
         request.POST.get('unit_name')
     )))
-

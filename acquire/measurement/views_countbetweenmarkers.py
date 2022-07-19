@@ -147,7 +147,6 @@ def countbetweenmarkers_fig(username: str, x_unit: str = 'ps') -> str:
             cbm_config = usr_cbm_map[username].config
             ch_click = cbm_config['click_channel']
             ch_begin, ch_end = cbm_config['begin_channel'], cbm_config['end_channel']
-            # line.add_xaxis(list(range(1, cbm_config['n_values'] + 1)))
             line.add_xaxis((cbm.getIndex() * x_scale).tolist())
             line.add_yaxis(
                 series_name='click: channel-{}, begin: channel-{}, end: channel-{}'.format(ch_click, ch_begin, ch_end),

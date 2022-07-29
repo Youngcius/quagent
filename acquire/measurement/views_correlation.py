@@ -4,6 +4,7 @@ Data acquisition in Correlation mode
 import uuid
 import datetime
 import copy
+import TimeTagger as tt
 
 from pyecharts import options as opts
 from pyecharts import charts

@@ -1,16 +1,16 @@
 """
 Data acquisition in Histogram mode
 """
-import numpy as np
 from django.shortcuts import render
 from django.http import HttpRequest, HttpResponse, JsonResponse, FileResponse, Http404
 from django.http import HttpResponseServerError  # 5xx error
 from django.views.decorators.csrf import csrf_exempt
 import uuid
 import datetime
+import copy
+import TimeTagger as tt
 from pyecharts import options as opts
 from pyecharts import charts
-import copy
 
 from ..utils import *
 from ..models import *

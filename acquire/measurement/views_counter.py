@@ -4,7 +4,7 @@ Data acquisition Counter mode
 import copy
 import datetime
 import uuid
-import numpy as np
+import TimeTagger as tt
 
 from django.shortcuts import render
 from django.http import HttpRequest, HttpResponse, JsonResponse, FileResponse, Http404
@@ -162,14 +162,15 @@ def counter_fig(username: str, x_unit: str = 'ps') -> str:
             for i, ch in enumerate(counter_config['channels']):
                 line.add_yaxis(
                     series_name='channel {}'.format(ch),
+                    # y_axis=(counts[i] / counter_config['binwidth']).tolist(),
                     y_axis=counts[i].tolist(),
                     label_opts=opts.LabelOpts(is_show=False)
                 )
-
+        print('\t\t\t binwidth:', counter_config['binwidth'])
     line.set_global_opts(
         title_opts=opts.TitleOpts(title='Counting'),
         xaxis_opts=opts.AxisOpts(type_='value', name='Time ({})'.format(x_unit)),
-        yaxis_opts=opts.AxisOpts(type_='value', name='Count', min_=ymin, max_=ymax)
+        yaxis_opts=opts.AxisOpts(type_='value', name='Count/s', min_=ymin, max_=ymax)
     )
     fig_str = line.dump_options_with_quotes()
     return fig_str

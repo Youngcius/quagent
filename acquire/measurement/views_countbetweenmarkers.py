@@ -5,9 +5,10 @@ Data acquisition in CountBetweenMarkers mode
 import copy
 import datetime
 import uuid
+import TimeTagger as tt
 
 from django.shortcuts import render
-from django.http import HttpRequest, HttpResponse, JsonResponse, FileResponse, Http404
+from django.http import JsonResponse, FileResponse, Http404
 from django.http import HttpResponseServerError  # 5xx error
 from django.views.decorators.csrf import csrf_exempt
 from jinja2 import Environment, FileSystemLoader

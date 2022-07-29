@@ -7,9 +7,10 @@ from django.http import HttpResponseServerError  # 5xx error
 from django.views.decorators.csrf import csrf_exempt
 import uuid
 import datetime
+import copy
+import TimeTagger as tt
 from pyecharts import options as opts
 from pyecharts import charts
-import copy
 
 from ..utils import *
 from ..models import *
@@ -132,7 +133,7 @@ def startstop_fig(username: str, x_unit: str = 'ps') -> str:
         startstop = usr_stsp_map[username].detector
         if startstop.isRunning():
             data = startstop.getData()  # size [N ,2]
-            ymax, ymin = cal_max_min_limits(data[:, 1]) # data长度可能不超过1
+            ymax, ymin = cal_max_min_limits(data[:, 1])  # data长度可能不超过1
             # vals = np.abs(np.random.randn(len(data)))  # delete this
             hist.add_xaxis((data[:, 0] * x_scale).tolist())
             hist.add_yaxis(
@@ -154,4 +155,3 @@ def startstop_chart_view(request):
         request.user.username,
         request.POST.get('unit_name')
     )))
-

@@ -156,17 +156,15 @@ def counter_fig(username: str, x_unit: str = 'ps') -> str:
         counter_config = usr_cnt_map[username].config
         counter = usr_cnt_map[username].detector
         if counter.isRunning():
-            counts = counter.getData()  # size [num_ch, n_values]
+            counts = counter.getData() / (counter_config['binwidth'] * 1e-12)  # size [num_ch, n_values]
             ymax, ymin = cal_max_min_limits(counts)
             line.add_xaxis((counter.getIndex() * x_scale).tolist())
             for i, ch in enumerate(counter_config['channels']):
                 line.add_yaxis(
                     series_name='channel {}'.format(ch),
-                    y_axis=(counts[i] / (counter_config['binwidth'] * 1e-12)).tolist(),
-                    # y_axis=counts[i].tolist(),
+                    y_axis=counts[i].tolist(),
                     label_opts=opts.LabelOpts(is_show=False)
                 )
-        print('\t\t\t binwidth:', counter_config['binwidth'])
     line.set_global_opts(
         title_opts=opts.TitleOpts(title='Counting'),
         xaxis_opts=opts.AxisOpts(type_='value', name='Time ({})'.format(x_unit)),

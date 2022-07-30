@@ -132,8 +132,6 @@ def correlation_fig(username: str, x_unit: str = 'ps') -> str:
     :param x_unit: to set x-axis unit, e.g., ns"""
     hist = charts.Bar()
     x_scale = 1e-12 / unit_to_num[x_unit]
-    print()
-    print('x_scale', x_scale)
     ymax, ymin = None, None
     if username in usr_corr_map.keys():
         correlation = usr_corr_map[username].detector
@@ -146,7 +144,6 @@ def correlation_fig(username: str, x_unit: str = 'ps') -> str:
                 y_axis=vals.tolist(),
                 label_opts=opts.LabelOpts(is_show=False)
             )
-        print(usr_corr_map[username].config)
 
     hist.set_global_opts(
         title_opts=opts.TitleOpts(title='Time Correlation Counting'),

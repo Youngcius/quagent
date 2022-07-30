@@ -146,6 +146,7 @@ def correlation_fig(username: str, x_unit: str = 'ps') -> str:
                 y_axis=vals.tolist(),
                 label_opts=opts.LabelOpts(is_show=False)
             )
+        print(usr_corr_map[username].config)
 
     hist.set_global_opts(
         title_opts=opts.TitleOpts(title='Time Correlation Counting'),

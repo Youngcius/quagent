@@ -162,8 +162,8 @@ def counter_fig(username: str, x_unit: str = 'ps') -> str:
             for i, ch in enumerate(counter_config['channels']):
                 line.add_yaxis(
                     series_name='channel {}'.format(ch),
-                    # y_axis=(counts[i] / counter_config['binwidth']).tolist(),
-                    y_axis=counts[i].tolist(),
+                    y_axis=(counts[i] / (counter_config['binwidth'] * 1e-12)).tolist(),
+                    # y_axis=counts[i].tolist(),
                     label_opts=opts.LabelOpts(is_show=False)
                 )
         print('\t\t\t binwidth:', counter_config['binwidth'])

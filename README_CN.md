@@ -62,7 +62,7 @@ git clone http://github.com/Youngcius/quagent
 
 ## 反馈
 
-我们鼓励用户通过 [Github Issues](https://github.com/Youngcius/quagent/issues) 或 zhy@email.arizona.edu
+我们鼓励用户通过 [Github Issues](https://github.com/Youngcius/quagent/issues) 或 zhy@arizona.edu
 联系我们反馈一般问题、错误和改进意见和建议。我们希望通过与社区的合作让 Quagent 变得更好！
 
 ## 常见问题
@@ -80,8 +80,8 @@ git clone http://github.com/Youngcius/quagent
 **Q: 如果我不是亚利桑那大学的师生，我应该如何支持使用 Quagent？**
 
 **A:** Quagent 并不是纯软件级的应用。他的设计框架和应用场景目前依赖于亚利桑那大学的一系列硬件平台之上。目前亚利桑那大学中连接到
-其量子网络中心（hub）的终端实验室才能使用 Quagent。如果您并不是亚利桑那大学的师生，您并没有实际使用的必要。如果您是相关行业的研究人员，您
-可以下载 Quagent 项目，并对其修改使其适配于自己的硬件平台。
+其量子网络中心（hub）的终端实验室才能使用 Quagent。如果您并不是亚利桑那大学的师生，您并没有实际使用的必要。如果您是相关行业的研究人员，您可以下载
+Quagent 项目，并对其修改使其适配于自己的硬件平台。
 
 ## 版权和许可证
 

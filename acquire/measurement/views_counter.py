@@ -155,10 +155,8 @@ def counter_fig(username: str, x_unit: str = 'ps') -> str:
     if username in usr_cnt_map.keys():
         counter_config = usr_cnt_map[username].config
         counter = usr_cnt_map[username].detector
-        # line.add_xaxis(list(range(0, counter_config['n_values'] + 1)))
         if counter.isRunning():
-            # counts = counter.getData()  # size [num_ch, n_values] TODO: randomization, modified on 06/10
-            counts = randomize(counter.getData())
+            counts = counter.getData()  # size [num_ch, n_values]
             ymax, ymin = cal_max_min_limits(counts)
             line.add_xaxis((counter.getIndex() * x_scale).tolist())
             for i, ch in enumerate(counter_config['channels']):

@@ -76,7 +76,7 @@ git clone git@github.com:Youngcius/quagent.git
 ## Feedbacks
 
 Users are encouraged to contact us through [Github Issues](https://github.com/Youngcius/quagent) or
-zhy@email.arizona.edu with general questions, bugs, and potential improvements. We hope to make quagent better together
+zhy@arizona.edu with general questions, bugs, and potential improvements. We hope to make quagent better together
 with the community!
 
 ## Frequently Asked Questions

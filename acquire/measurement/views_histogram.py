@@ -133,11 +133,8 @@ def histogram_fig(username: str, x_unit: str = 'ps') -> str:
     ymax, ymin = None, None
     if username in usr_hist_map.keys():
         histogram = usr_hist_map[username].detector
-        # hist_config = usr_hist_map[username].config
-        # hist.add_xaxis([i * hist_config['binwidth'] for i in range(1, hist_config['n_bins'] + 1)])
         if histogram.isRunning():
             vals = histogram.getData()
-            # vals = np.abs(np.random.randn(len(ls)))
             ymax, ymin = cal_max_min_limits(vals)
             hist.add_xaxis((histogram.getIndex() * x_scale).tolist())  # 转换刻度, unit 是单位，和 binwidth * n_bins 是最大
             hist.add_yaxis(

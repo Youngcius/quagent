@@ -1,7 +1,7 @@
 # User Manual
 
 > Last updated: June, 2022<br>
-> Editor: [Zhaohui Yang](https://youngcius.com) (zhy@email.arizona.edu)
+> Editor: [Zhaohui Yang](https://youngcius.com) (zhy@arizona.edu)
 
 
 ![](../images/quagent-slogan.png)

@@ -33,7 +33,7 @@ from .utils import *
 #     #     "name": "Zhaohui Yang",
 #     #     "first_name": "Zhaohui",
 #     #     "last_name": "Yang",
-#     #     "email": "zhy@email.arizona.edu",
+#     #     "email": "zhy@airzona.edu",
 #     #     "phone": "5205247501",
 #     #     "employee_id": "N/A"
 #     # },

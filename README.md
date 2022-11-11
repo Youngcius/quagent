@@ -14,7 +14,7 @@ aiming to facilitate multi-access research and teaching on quantum information e
 of the National Science Foundation (
 NSF) [Major Research Instrumentation (MRI) #1828132](https://www.nsf.gov/awardsearch/showAward?AWD_ID=1828132&HistoricalAwards=false)
 award project. This operation software will be hopefully applied to the series of experimental platforms of
-the [Center of Quantum Network](https://cqn-erc.org/) at the University of Arizona. Our final goal is to provide a
+the [Center for Quantum Networks](https://cqn-erc.org/) at the University of Arizona. Our final goal is to provide a
 universal technical prototype for quantum networks in terms of the local agent terminal.
 
 ![](static/images/profile.png)
@@ -38,7 +38,7 @@ More details could be found in the [manual](./static/doc/manual.md) for referenc
 
 ## Usage
 
-### Native Usage via only Quagent at U Arizona
+### Native Usage via only Quagent at UA
 
 Quanget itself provides a complete set of functionalities, including user registration, laboratory grouping, resource
 management, usage configures, data acquisition and real-time administrative monitoring and so on. The included
@@ -53,12 +53,12 @@ interface without much guidance.
 
 A practical usage instance is described in the [design document](./static/doc/design.md) for reference.
 
-### Usage via Agilent iLab operation software at U Arizona
+### Usage via Agilent iLab operation software at UA
 
 Although Quagent can run independently in some internal laboratories at the University of Arizona, it is actually a
 technical prototype but not a released business software. And the independent project "Quanget" is mainly aimed to
-develop and test continuously. In the stable application scenarios of U Arizona, Quagent is integrated with iLab
-operation software supported by Agilent Inc. Thus if you are a supported user of the iLab system of U Arizona, you can
+develop and test continuously. In the stable application scenarios of UA, Quagent is integrated with iLab
+operation software supported by Agilent Inc. Thus if you are a supported user of the iLab system of UA, you can
 begin to use it conveniently via iLab.
 
 ![](./static/images/strategy-with-ilab.png)
@@ -87,18 +87,18 @@ with the community!
 project description is a good illustration. You can also refer to our [design document](static/doc/design.md)
 and [user manual](static/doc/manual.md) for more support.
 If you have more demand or cooperation willingness, please contact to
-the [Quantum Information and Materials Group](https://quantum.lab.arizona.edu) of U Arizona.
+the [Quantum Information and Materials Group](https://quantum.lab.arizona.edu) of UA.
 
-**Q: How can I get to start Quagent if I am faculty or student of U Arizona?**
+**Q: How can I get to start Quagent if I am faculty or student of UA?**
 
-**A:** You can contact ot related people at U Arizona or get more information from
+**A:** You can contact ot related people at UA or get more information from
 the [corresponding website](https://ua.ilab.agilent.com/landing/3645).
 
-**Q: Can I use Quagent via iLab if I am not a faculty or student in U Arizona?**
+**Q: Can I use Quagent via iLab if I am not a faculty or student in UA?**
 
 **A:** Quagent is not a pure-software application. It's framework and application scenarios are closely dependent on
-corresponding hardware platforms. Currently it is applied to the serial systematically linked laboratories of U Arizona.
-So if you are not a person in U Arizona, there is no necessity for you to use it. But if you are a researcher in related
+corresponding hardware platforms. Currently it is applied to the serial systematically linked laboratories of UA.
+So if you are not a person in UA, there is no necessity for you to use it. But if you are a researcher in related
 fields, you can build your own hardware supports and modify Quagent accordingly if possible.
 
 ## Copyright and License

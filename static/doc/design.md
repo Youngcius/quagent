@@ -13,7 +13,7 @@
 The following figure shows which laboratories (nodes) are connected to the central service (hub) that generate entangled
 photons and receive photons to detect.
 
-![](../images/profile-new.png)
+![](../images/layout.png)
 
 Although Quagent can support 16 terminal users, i.e., 16 laboratories or 16 nodes, currently there are 13 nodes totally,
 connected directly to subhubs respectively.
@@ -87,6 +87,8 @@ The administrative program of Quagent use SimpleUI to implement a more fashion i
 software by some additional configurations in the setting program of Quagent.
 
 ## Software Architecture
+
+![](../images/modules.png)
 
 This software consists of five modules in the back-end:
 

@@ -65,6 +65,12 @@ begin to use it conveniently via iLab.
 
 A demonstrative [video](static/doc/Demonstration%20-%20Quantum%20Network%20Testbed.mp4) is for reference.
 
+
+In the backend administration, the real-time status of quantum network will be monitored:
+
+![](./static/images/network-status.png)
+
+
 ### Download and install via GitHub
 
 For development and research necessity, downloading the last universal prototype software is from GitHub.

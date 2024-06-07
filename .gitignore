@@ -139,3 +139,5 @@ dmypy.json
 #output/
 
 config.json
+
+.DS_Store
